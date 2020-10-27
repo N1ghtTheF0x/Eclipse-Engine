@@ -1,0 +1,32 @@
+{
+  "name": "eclipse-engine",
+  "version": "1.0.0",
+  "description": "A Game Engine using Electron, Javascript and the HTML5 Canvas feature",
+  "main": "index.js",
+  "author": "N1ghtTheF0x",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "discord-rpc": "^3.1.4",
+    "discord.js": "^12.3.1",
+    "gamecontroller.js": "^1.5.0",
+    "socket.io-client": "^2.3.1"
+  },
+  "devDependencies": {
+    "electron": "10.1.2",
+    "electron-builder": "^22.8.1"
+  },
+  "scripts": {
+    "start": "npx electron ."
+  },
+  "build": {
+    "productName": "GENOMENAL ADVENTURES OF DR. W",
+    "appId": "org.eclipseengine.drw",
+    "win": {
+      "icon": "./textures/icon.ico"
+    }
+  },
+  "repository": {
+    "url": "https://github.com/N1ghtTheF0x/Eclipse-Engine"
+  }
+}

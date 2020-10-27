@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body
+            {
+                background-color: black;
+            }
+            canvas
+            {
+                background-color: white;
+                position: fixed;
+                top: 0;
+                left: 12.5%;
+                right: 12.5%;
+                bottom: 0;
+                width: 75%;
+                height: 100%;
+                image-rendering: pixelated;
+            }
+            debug
+            {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                color: white;
+                user-select: none;
+                
+            }
+            p
+            {
+                margin: 1px;
+            }
+        </style>
+    </head>
+    <body>
+        <debug id="debugtag">
+            <p>FPS: <span id="dfps"></span></p>
+            <p>PRESSED: <span id="pressed"></span></p>
+            <p>PLAYER X SPD: <span id="pxsp"></span></p>
+            <p>PLAYER Y SPD: <span id="pysp"></span></p>
+            <p>FACING: <span id="facing"></span></p>
+            <p>ISHIT: <span id="ishit"></span></p>
+            <p>CAMERA X SPD: <span id="cxsp"></span></p>
+            <p>CAMERA Y SPD: <span id="cysp"></span></p>
+            <p>PLAYER X POS: <span id="px"></span></p>
+            <p>PLAYER Y POS: <span id="py"></span></p>
+        </debug>
+
+    </body>
+    <script src="main.js"></script>
+</html>
