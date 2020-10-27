@@ -20,8 +20,8 @@
     "start": "npx electron ."
   },
   "build": {
-    "productName": "GENOMENAL ADVENTURES OF DR. W",
-    "appId": "org.eclipseengine.drw",
+    "productName": "Eclipse Engine",
+    "appId": "org.eclipseteam.ee",
     "win": {
       "icon": "./textures/icon.ico"
     }
