@@ -19,7 +19,10 @@ function Window()
     )
     win.setMenu(null)
     win.loadFile("index.html")
-    //win.webContents.openDevTools()
+    if(process.argv.includes("--edev"))
+    {
+        win.webContents.openDevTools()
+    }
 }
 electron.app.whenReady().then(Window)
 .catch(function(err)

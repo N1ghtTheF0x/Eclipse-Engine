@@ -1,3 +1,5 @@
+const fs = require("fs")
+const utils = require("./utils")
 /**
  * The Main Canvas. Everything is here.
  */
@@ -31,6 +33,64 @@ function Clear(hardware=false)
     }
 }
 /**
+ * Returns a compiled shader if successful
+ * @param {number} type - The type of shader: Fragment or Vertex
+ * @param {string} path - Path to the Shader's source file
+ */
+function GetShader(type=gl.VERTEX_SHADER,path="")
+{
+    const shader = gl.createShader(type)
+    gl.shaderSource(shader,fs.readFileSync(path,{encoding:"utf-8"}))
+    gl.compileShader(shader)
+    if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS))
+    {
+        utils.print("error","Shader compiling failed with "+path+":\n\n"+gl.getShaderInfoLog(shader))
+        gl.deleteShader(shader)
+        return null
+    }
+    return shader
+}
+/**
+ * Returns the Shader Program of one Vertex and Fragment Shader
+ * @param {string} vertexPath - Path to the Vertex Shader's source file
+ * @param {string} fragmentPath - Path to the Fragment Shader's source file
+ */
+function GetShaderProgram(vertexPath="",fragmentPath="")
+{
+    const Vs = GetShader(gl.VERTEX_SHADER,vertexPath)
+    const Fs = GetShader(gl.FRAGMENT_SHADER,fragmentPath)
+    const shaderprogram = gl.createProgram()
+    gl.attachShader(shaderprogram,Vs)
+    gl.attachShader(shaderprogram,Fs)
+    gl.linkProgram(shaderprogram)
+    if(!gl.getProgramParameter(shaderprogram,gl.LINK_STATUS))
+    {
+        utils.print("error","Shader Program not initialized:\n\n"+gl.getProgramInfoLog(shaderprogram))
+        return null
+    }
+    return shaderprogram
+}
+function InitBuffers(positions=[-1.0,1.0])
+{
+    const pB = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER,pB)
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(positions),gl.STATIC_DRAW)
+    return pB
+}
+const ProgramInfo =
+{
+    program:undefined||new WebGLProgram(),
+    attribLocations:
+    {
+        vertexPosition:undefined
+    },
+    uniformLocations:
+    {
+        projectionMatrix:undefined,
+        modelViewMatrix:undefined
+    }
+}
+/**
  * Here you can find all important variables to Rendering
  */
 module.exports =
@@ -38,5 +98,7 @@ module.exports =
     canvas:canvas,
     drawFaktor:drawFaktor,
     ctx:ctx,
-    gl:gl
+    gl:gl,
+    clear:Clear,
+    glProgramInfo:ProgramInfo
 }

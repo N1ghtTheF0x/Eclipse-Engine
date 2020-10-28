@@ -17,6 +17,7 @@ class EAudio
          * Get ot set if audio should loop
          */
         this.loop = loop
+        this.audioContext = new AudioContext()
         try
         {
             this._audio = new Audio(this.src)
@@ -26,6 +27,8 @@ class EAudio
             print("warn","The Audio Path is wrong or not present!")
             print("error",err)
         }
+        this.track = this.audioContext.createMediaElementSource(this._audio)
+        this.track.connect(this.audioContext.destination)
         this._audio.loop=this.loop
         /**
          * Has the audio stopped by the stop function?
