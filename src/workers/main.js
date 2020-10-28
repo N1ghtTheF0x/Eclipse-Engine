@@ -1,11 +1,11 @@
 const update = require("./update")
 const draw = require("./draw")
-const options = require("./../../options)
+const options = require("./../../options.json")
 
-function MainWorker()
+function main()
 {
-    update()
-    draw()
+    update.tick()
+    draw.tick()
     if(options.refreshMethod==="raf")
     {
         requestAnimationFrame(MainWorker)

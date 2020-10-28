@@ -1,4 +1,5 @@
 const fs = require("fs")
+const matrix = require("gl-matrix")
 const utils = require("./utils")
 /**
  * The Main Canvas. Everything is here.
@@ -25,7 +26,10 @@ function Clear(hardware=false)
     if(hardware)
     {
         gl.clearColor(0,0,0,0)
-        gl.clear(gl.COLOR_CLEAR_VALUE)
+        gl.clearDepth(1.0)
+        gl.enable(gl.DEPTH_TEST)
+        gl.depthFunc(gl.LEQUAL)
+        gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT)
     }
     else
     {
@@ -100,5 +104,9 @@ module.exports =
     ctx:ctx,
     gl:gl,
     clear:Clear,
-    glProgramInfo:ProgramInfo
+    glProgramInfo:ProgramInfo,
+    matrix:matrix,
+    GetShader:GetShader,
+    GetShaderProgram:GetShaderProgram,
+    InitBuffers:InitBuffers
 }
