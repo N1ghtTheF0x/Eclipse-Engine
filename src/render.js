@@ -94,6 +94,16 @@ const ProgramInfo =
         modelViewMatrix:undefined
     }
 }
+function FramesPerSecondCalc(time=0)
+{
+    const passed=(time-game.oldtime)/1000
+    const oldtime=time
+    const fps=Math.round(1/game.passed)
+    if(document.getElementById("dfps"))
+    {
+        document.getElementById("dfps").innerHTML = fps
+    }
+}
 /**
  * Here you can find all important variables to Rendering
  */
@@ -108,5 +118,6 @@ module.exports =
     matrix:matrix,
     GetShader:GetShader,
     GetShaderProgram:GetShaderProgram,
-    InitBuffers:InitBuffers
+    InitBuffers:InitBuffers,
+    fpsc:FramesPerSecondCalc
 }

@@ -1,17 +1,28 @@
 const update = require("./update")
 const draw = require("./draw")
 const options = require("./../../options.json")
+const render = require("./../render")
 
-function main()
+function main(Mtimestamp)
 {
+    var timestamp = 0
+    if(options.refreshMethod==="raf")
+    {
+        timestamp = Mtimestamp
+    }
+    else
+    {
+        timestamp = performance.now()
+    }
+    render.fpsc(timestamp)
     update.tick()
     draw.tick()
     if(options.refreshMethod==="raf")
     {
-        requestAnimationFrame(MainWorker)
+        requestAnimationFrame(main)
     }
     else if(options.refreshMethod==="si")
     {
-        setInterval(MainWorker,1000/60)
+        setInterval(main,1000/60)
     }
 }
