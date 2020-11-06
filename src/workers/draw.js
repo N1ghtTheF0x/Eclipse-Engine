@@ -41,7 +41,11 @@ function Tick()
     render.clear(options.hardware)
     if(options.hardware)
     {
-        
+        //HardwareDraw()
+    }
+    else
+    {
+        SoftwareDraw()
     }
     
 }

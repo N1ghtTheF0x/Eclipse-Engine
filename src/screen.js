@@ -14,3 +14,12 @@ class EScreen
         this.update = update
     }
 }
+
+const EScreens = new Map([["dummy",new EScreen("dummy","Dummy Screen Name",[],[],[],function(){alert("This is a Dummy Screen.")},function(){})]])
+
+
+module.exports =
+{
+    EScreen:EScreen,
+    EScreens:EScreens
+}

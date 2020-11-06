@@ -107,7 +107,40 @@ class EAudio
         return this._audio.paused
     }
 }
+
+class EAudioStepUp
+{
+    constructor(EAudioArray=[new EAudio()])
+    {
+        this.EAudioArray = EAudioArray
+        this.refrence = this.EAudioArray[0]
+        this.NextToPlay = 1
+
+    }
+    play(ms=0)
+    {
+        this.refrence.play(ms)
+    }
+    nextToPlay()
+    {
+        if(this.NextToPlay!==null)
+        {
+            const eaudio = this.EAudioArray[this.NextToPlay]
+            if(!this.refrence.isPaused()||!this.refrence.stopped)
+            {
+                eaudio.play(this.refrence._audio.currentTime)
+            }
+            this.NextToPlay++
+            if(this.EAudioArray[this.NextToPlay])
+            {
+                this.NextToPlay = null
+            }
+        }
+    }
+}
+
 module.exports =
 {
-    audio:EAudio
+    audio:EAudio,
+    stepUp:EAudioStepUp
 }
