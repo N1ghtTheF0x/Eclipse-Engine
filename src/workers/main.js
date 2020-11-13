@@ -1,6 +1,7 @@
 const options = require("./../../options.json")
 const render = require("./../render")
 const util = require("./../utils")
+const game = require("./../game")
 
 const worker = require("worker_threads")
 
@@ -16,8 +17,8 @@ function main(Mtimestamp)
         timestamp = performance.now()
     }
     render.fpsc(timestamp)
-    const upate = new worker.Worker("./update.js",{workerData:function(){}})
-    const draw = new worker.Worker("./draw.js",{workerData:[]})
+    const update = new worker.Worker("./update.js",{workerData:game.main.current.updateFunc})
+    const draw = new worker.Worker("./draw.js",{workerData:game.main.current.eobjects})
     if(options.refreshMethod==="raf")
     {
         requestAnimationFrame(main)
