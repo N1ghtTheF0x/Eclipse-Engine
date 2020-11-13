@@ -1,2 +1,4 @@
+# no need for node modules
 node_modules
+# no options file for you!
 options.json
