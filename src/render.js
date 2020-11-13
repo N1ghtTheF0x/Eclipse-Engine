@@ -5,12 +5,9 @@ const utils = require("./utils")
  * The Main Canvas. Everything is here.
  */
 const canvas = document.createElement("canvas")
-/**
- * This Faktor is used to calculate the "real" canvas width and height
- */
-var drawFaktor = (window.screen.height/200)
-canvas.height = 200*drawFaktor
-canvas.width = 320*drawFaktor
+
+canvas.height = window.screen.height
+canvas.width = window.screen.width
 /**
  * Software Render Context
  */

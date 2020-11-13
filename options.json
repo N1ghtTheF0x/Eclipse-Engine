@@ -1,4 +1,9 @@
 {
     "refreshMethod":"raf",
-    "hardware":false
+    "hardware":false,
+    "discordrpc":
+    {
+        "id":"717801948291792986",
+        "token":"vdr7KbZjdhUXpd8qGdSj3EqWxAKcflgD"
+    }
 }

@@ -4,7 +4,7 @@ function Window()
 {
     const win = new electron.BrowserWindow(
         {
-            title:"GENOMENAL ADVENTURES OF DR. W",
+            title:"Eclipse Engine - Blank Project",
             webPreferences:
             {
                 nodeIntegration:true,

@@ -1,7 +1,9 @@
 const drpc = require("discord-rpc")
+const options = require("./../options.json")
 const discord =
 {
-    id:"717801948291792986",
+    id:options.discordrpc.id,
+    token:options.discordrpc.token,
     discordRPC:new drpc.Client({transport:"ipc"})
 }
 try
@@ -14,7 +16,7 @@ catch(err)
 }
 try
 {
-    discord.discordRPC.login({clientId:discord.id,clientSecret:"vdr7KbZjdhUXpd8qGdSj3EqWxAKcflgD"}).catch(console.error).then(function(client)
+    discord.discordRPC.login({clientId:options.discordrpc.id,clientSecret:options.discordrpc.token}).catch(console.error).then(function(client)
     {
         print("info","Discord User Client detected!")
         print("info","Username: "+client.user.username)

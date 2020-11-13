@@ -100,23 +100,17 @@ class EObjectTEMP extends EObjectClass
          */
         this.color = color
     }
-    /**
-     * This function draws the object on the screen
-     * @software
-     */
+    /*
     draw()
     {
         render.ctx.fillStyle = this.color
         render.ctx.fillRect(this.x*drawFaktor,this.y*drawFaktor,this.w*drawFaktor,this.h*drawFaktor)
     }
-    /**
-     * For debugging stuff
-     */
     drawHitbox()
     {
         render.ctx.fillStyle = util.RGBA(0,255,0,0.25)
         render.ctx.fillRect(0,0,this.w*drawFaktor,this.h*drawFaktor)
-    }
+    }*/
 }
 class EObject extends EObjectClass
 {
@@ -220,24 +214,19 @@ class EObject extends EObjectClass
         this._ctx.translate(-((this.x+this.w)/2),-((this.y+this.h)/2))
         this.ang=deg
     }
-    /**
-     * Draws the EObject on screen
-     * @software
-     */
+    /*
     draw()
     {
         this._ctx.clearRect(0,0,this.w,this.h)
         this._ctx.drawImage(this._image,this.sx,this.sy,this.sw,this.sh,0,0,this.w,this.h)
         render.ctx.drawImage(this._canvas,0,0,this.w,this.h,this.x*drawFaktor,this.y*drawFaktor,this.w*drawFaktor,this.h*drawFaktor)
     }
-    /**
-     * Draws the EObject's Hitbox
-     */
+
     drawHitbox()
     {
         this._ctx.fillStyle = util.RGBA(0,255,0,0.25)
         this._ctx.fillRect(0,0,this.w*drawFaktor,this.h*drawFaktor)
-    }
+    }*/
 }
 class EObjectPlayerTEMP extends EObjectTEMP
 {
@@ -252,31 +241,6 @@ class EObjectPlayerTEMP extends EObjectTEMP
     constructor(x=0,y=0,w=0,h=0,color="")
     {
         super(x,y,w,h,"player",color)
-        /**
-         * An object which key the player pressed on a keyboard
-         */
-        this.pressed =
-        {
-            up:false, // W
-            down:false, // S
-            left:false, // A
-            right:false, // D
-            jump:false, // Space
-            enter:false, // Well, Enter
-            any:false // any key
-        }
-        /**
-         * An object which button the player pressed on a controller
-         */
-        this.controllerPressed =
-        {
-            up:false, // Left Joystick Up
-            down:false, // Left Joystick Down
-            left:false, // Left Joystick Left
-            right:false, // Left Joystick Right
-            jump:false, // A Button
-            start:false // Start Button
-        }
         /**
          * Is the player jumping at the moment?
          */
@@ -324,31 +288,6 @@ class EObjectPlayer extends EObject
     constructor(x=0,y=0,w=0,h=0,spritesheet="")
     {
         super(x,y,w,h,"player",spritesheet)
-        /**
-         * An object which key the player pressed on a keyboard
-         */
-        this.pressed =
-        {
-            up:false, // W
-            down:false, // S
-            left:false, // A
-            right:false, // D
-            jump:false, // Space
-            enter:false, // Well, Enter
-            any:false // any key
-        }
-        /**
-         * An object which button the player pressed on a controller
-         */
-        this.controllerPressed =
-        {
-            up:false, // Left Joystick Up
-            down:false, // Left Joystick Down
-            left:false, // Left Joystick Left
-            right:false, // Left Joystick Right
-            jump:false, // A Button
-            start:false // Start Button
-        }
         /**
          * Is the player jumping at the moment?
          */
@@ -398,21 +337,6 @@ class ETrigger extends EObjectClass
         super(x,y,w,h,"trigger")
         this.ontrigger = ontrigger
     }
-    /**
-     * Is empty for a good reason
-     */
-    draw()
-    {
-
-    }
-    /**
-     * Draws the Hitbox of the Trigger
-     */
-    drawHitbox()
-    {
-        render.ctx.fillStyle=RGBA(0,0,255,0.25)
-        render.ctx.fillRect(this.x*drawFaktor,this.y*drawFaktor,this.w*drawFaktor,this.h*drawFaktor)
-    }
 }
 class EDoor extends EObjectClass
 {
@@ -428,18 +352,6 @@ class EDoor extends EObjectClass
     {
         super(x,y,w,h,"door")
         this.onpress = onpress
-    }
-    /**
-     * Same reason as `ETrigger`
-     */
-    draw(){}
-    /**
-     * Draws the Hitbox of the door
-     */
-    drawHitbox()
-    {
-        render.ctx.fillStyle=RGBA(255,0,0,0.25)
-        render.ctx.fillRect(this.x*drawFaktor,this.y*drawFaktor,this.w*drawFaktor,this.h*drawFaktor)
     }
 }
 class ETileset
