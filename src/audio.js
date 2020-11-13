@@ -144,3 +144,4 @@ module.exports =
     audio:EAudio,
     stepUp:EAudioStepUp
 }
+util.print("info","Initialized Audio Module")

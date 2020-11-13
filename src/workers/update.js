@@ -1,10 +1,11 @@
 const utils = require("./../utils")
+const workerDate = require("worker_threads").workerData
 
 function Tick()
 {
-
+    if(workerDate)
+    {
+        workerDate()
+    }
 }
-module.exports =
-{
-    tick:Tick
-}
+Tick()

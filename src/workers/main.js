@@ -1,7 +1,8 @@
-const update = require("./update")
-const draw = require("./draw")
 const options = require("./../../options.json")
 const render = require("./../render")
+const util = require("./../utils")
+
+const worker = require("worker_threads")
 
 function main(Mtimestamp)
 {
@@ -15,8 +16,8 @@ function main(Mtimestamp)
         timestamp = performance.now()
     }
     render.fpsc(timestamp)
-    update.tick()
-    draw.tick()
+    const upate = new worker.Worker("./update.js",{workerData:function(){}})
+    const draw = new worker.Worker("./draw.js",{workerData:[]})
     if(options.refreshMethod==="raf")
     {
         requestAnimationFrame(main)
@@ -25,4 +26,9 @@ function main(Mtimestamp)
     {
         setInterval(main,1000/60)
     }
+    else if(options.refreshMethod==="to")
+    {
+        setTimeout(main,1000/60)
+    }
 }
+util.print("info","Initialized Main Worker")

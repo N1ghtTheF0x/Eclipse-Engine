@@ -23,3 +23,4 @@ module.exports =
     EScreen:EScreen,
     EScreens:EScreens
 }
+util.print("info","Initialized Screen Module")

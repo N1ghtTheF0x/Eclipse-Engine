@@ -105,3 +105,4 @@ module.exports =
     RGBA:RGBA,
     IsNumberNegative:IsNumberNegative
 }
+print("info","Initialized Utils Module")

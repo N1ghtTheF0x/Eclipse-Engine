@@ -1,7 +1,9 @@
 const util = require("./../utils")
 const render = require("./../render")
 const options = require("./../../options.json")
+const eobjectM = require("./../objects")
 const { gl } = require("./../render")
+const workerData = require("worker_threads").workerData
 
 function HardwareDraw(programInfo=render.glProgramInfo,buffers=render.InitBuffers())
 {
@@ -32,9 +34,28 @@ function HardwareDraw(programInfo=render.glProgramInfo,buffers=render.InitBuffer
         gl.drawArrays(gl.TRIANGLE_STRIP,offset,vertexCount)
     }
 }
-function SoftwareDraw()
+function SoftwareDraw(objects=[new eobjectM.main(),new eobjectM.temp()])
 {
-    
+    if(objects instanceof Array)
+    {
+        for(const object of objects)
+        {
+            if(object.x>(-20-object.w)||object.x<(render.canvas.width+object.w))
+            {
+                if(object.color)
+                {
+                    render.ctx.fillStyle = object.color
+                    render.ctx.fillRect(object.x,object.y,object.w,object.h)
+                }
+                if(object._image)
+                {
+                    object._ctx.clearRect(0,0,object.w,object.h)
+                    object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.w,object.h)
+                    render.ctx.drawImage(object._canvas,0,0,object.w,object.h,object.x,object.y,object.w,object.h)
+                }
+            }
+        }
+    }
 }
 function Tick()
 {
@@ -45,11 +66,8 @@ function Tick()
     }
     else
     {
-        SoftwareDraw()
+        SoftwareDraw(workerData)
     }
     
 }
-module.exports =
-{
-    tick:Tick
-}
+Tick()

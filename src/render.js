@@ -118,3 +118,4 @@ module.exports =
     InitBuffers:InitBuffers,
     fpsc:FramesPerSecondCalc
 }
+util.print("info","Initialized Render Module")

@@ -29,3 +29,4 @@ catch (error)
     print("warn","Discord User Client not detected!")
 }
 module.exports = discord
+util.print("info","Initialized Discord RPC Module")

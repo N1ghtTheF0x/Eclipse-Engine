@@ -9,3 +9,4 @@ module.exports =
 {
     main:game
 }
+util.print("info","Initialized Game Module")

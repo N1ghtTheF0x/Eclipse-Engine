@@ -304,3 +304,4 @@ document.addEventListener("oncontextmenu",function(event)
 {
     controls.cursor.rclicked=true
 },false)
+util.print("info","Initialized Input Module")
