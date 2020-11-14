@@ -3,7 +3,6 @@ const render = require("./../render")
 const options = require("./../../options.json")
 const eobjectM = require("./../objects")
 const { gl } = require("./../render")
-const workerData = require("worker_threads").workerData
 
 function HardwareDraw(programInfo=render.glProgramInfo,buffers=render.InitBuffers())
 {
@@ -40,24 +39,27 @@ function SoftwareDraw(objects=[new eobjectM.main(),new eobjectM.temp()])
     {
         for(const object of objects)
         {
-            if(object.x>(-20-object.w)||object.x<(render.canvas.width+object.w))
+            if(object)
             {
-                if(object.color)
+                if(object.x>(-20-object.w)||object.x<(render.canvas.width+object.w))
                 {
-                    render.ctx.fillStyle = object.color
-                    render.ctx.fillRect(object.x,object.y,object.w,object.h)
-                }
-                if(object._image)
-                {
-                    object._ctx.clearRect(0,0,object.w,object.h)
-                    object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.w,object.h)
-                    render.ctx.drawImage(object._canvas,0,0,object.w,object.h,object.x,object.y,object.w,object.h)
+                    if(object.color)
+                    {
+                        render.ctx.fillStyle = object.color
+                        render.ctx.fillRect(object.x,object.y,object.w,object.h)
+                    }
+                    if(object._image)
+                    {
+                        object._ctx.clearRect(0,0,object.w,object.h)
+                        object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.w,object.h)
+                        render.ctx.drawImage(object._canvas,0,0,object.w,object.h,object.x,object.y,object.w,object.h)
+                    }
                 }
             }
         }
     }
 }
-function Tick()
+function Tick(objects)
 {
     render.clear(options.hardware)
     if(options.hardware)
@@ -66,8 +68,8 @@ function Tick()
     }
     else
     {
-        SoftwareDraw(workerData)
+        SoftwareDraw(objects)
     }
     
 }
-Tick()
+module.exports = Tick

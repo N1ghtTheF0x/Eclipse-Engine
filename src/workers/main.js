@@ -1,35 +1,52 @@
 const options = require("./../../options.json")
 const render = require("./../render")
 const util = require("./../utils")
-const game = require("./../game")
 
-const worker = require("worker_threads")
+const update = require("./update")
+const draw = require("./draw")
 
-function main(Mtimestamp)
+function main(Mtimestamp=0)
 {
-    var timestamp = 0
-    if(options.refreshMethod==="raf")
+    try
     {
-        timestamp = Mtimestamp
+        const game = require("./../game")
+        var timestamp = 0
+        if(options.refreshMethod==="raf")
+        {
+            timestamp = Mtimestamp
+        }
+        else
+        {
+            timestamp = performance.now()
+        }
+        if(document.getElementById("dfps"))
+        {
+            const FPS = render.fpsc(timestamp)
+            document.getElementById("dfps").innerText = FPS
+        }
+        //new Worker("./src/workers/update.js",{workerData:game.main.current.updateFunc})
+        new Worker("./src/workers/draw.js",{workerData:game.main.current.eobjects})
+        update(game.main.current.updateFunc)
+        draw(game.main.current.eobjects)
+        if(options.refreshMethod==="raf")
+        {
+            game.intervalUpdate(requestAnimationFrame(main))
+        }
+        else if(options.refreshMethod==="si")
+        {
+            game.intervalUpdate(setInterval(main,1000/60))
+        }
+        else if(options.refreshMethod==="to")
+        {
+            game.intervalUpdate(setTimeout(main,1000/60))
+        }
     }
-    else
+    catch(err)
     {
-        timestamp = performance.now()
-    }
-    render.fpsc(timestamp)
-    const update = new worker.Worker("./update.js",{workerData:game.main.current.updateFunc})
-    const draw = new worker.Worker("./draw.js",{workerData:game.main.current.eobjects})
-    if(options.refreshMethod==="raf")
-    {
-        requestAnimationFrame(main)
-    }
-    else if(options.refreshMethod==="si")
-    {
-        setInterval(main,1000/60)
-    }
-    else if(options.refreshMethod==="to")
-    {
-        setTimeout(main,1000/60)
+        throw err
     }
 }
-util.print("info","Initialized Main Worker")
+module.exports =
+{
+    main:main
+}

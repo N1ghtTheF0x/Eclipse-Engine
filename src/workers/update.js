@@ -1,11 +1,7 @@
 const utils = require("./../utils")
-const workerDate = require("worker_threads").workerData
-
-function Tick()
+const controls = require("./../input").controls
+function Tick(UpdateFunction=function(controls=controls){})
 {
-    if(workerDate)
-    {
-        workerDate()
-    }
+    UpdateFunction(controls)
 }
-Tick()
+module.exports = Tick

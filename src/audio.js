@@ -24,8 +24,8 @@ class EAudio
         }
         catch(err)
         {
-            print("warn","The Audio Path is wrong or not present!")
-            print("error",err)
+            util.print("warn","The Audio Path is wrong or not present!")
+            util.print("error",err)
         }
         this.track = this.audioContext.createMediaElementSource(this._audio)
         this.track.connect(this.audioContext.destination)
@@ -139,9 +139,46 @@ class EAudioStepUp
     }
 }
 
+class EAudioBoost
+{
+    constructor(main=new EAudio(),fx=new EAudio())
+    {
+        this.main = main
+        this.fx = fx
+        this.fx._audio.volume=0
+        this.boosting = false
+    }
+    startBoost()
+    {
+        this.main._audio.volume=0
+        this.fx._audio.volume=1
+        this.boosting = true
+    }
+    stopBoost()
+    {
+        this.main._audio.volume=1
+        this.fx._audio.volume=0
+    }
+    play(ms=0)
+    {
+        this.main.play(ms)
+        this.fx.play(ms)
+    }
+    pause()
+    {
+        this.main.pause()
+        this.fx.pause()
+    }
+    stop()
+    {
+        this.main.stop()
+        this.fx.stop()
+    }
+}
+
 module.exports =
 {
     audio:EAudio,
-    stepUp:EAudioStepUp
+    stepUp:EAudioStepUp,
+    boost:EAudioBoost
 }
-util.print("info","Initialized Audio Module")

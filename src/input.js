@@ -1,4 +1,6 @@
 require("gamecontroller.js")
+const util = require("./utils")
+
 const controls =
 {
     lastInputDevice:"keyboard",
@@ -278,7 +280,7 @@ document.addEventListener("keydown",function(event)
     controls.keyboardPressed.plusALT=event.altKey
     controls.keyboardPressed.plusCTRL=event.ctrlKey
     controls.lastInputDevice="keyboard"
-    Dprint("Player pressed on the Keyboard "+event.code)
+    util.Dprint("Player pressed on the Keyboard "+event.code)
     
 },false)
 document.addEventListener("keyup",function(event)
@@ -304,4 +306,7 @@ document.addEventListener("oncontextmenu",function(event)
 {
     controls.cursor.rclicked=true
 },false)
-util.print("info","Initialized Input Module")
+module.exports =
+{
+    controls:controls
+}

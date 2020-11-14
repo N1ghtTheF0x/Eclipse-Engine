@@ -446,4 +446,3 @@ module.exports =
     collision:collision,
     globals:globals
 }
-util.print("info","Initialized EObject Module")

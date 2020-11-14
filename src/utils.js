@@ -13,6 +13,9 @@ function sleep(ms=1000)
  */
 function print(type="WARN",message="Default print text!")
 {
+    const _console = require("console").Console
+    const fs = require("fs")
+    const fileconsole = new _console(fs.createWriteStream(__dirname+"/../out.log"),fs.createWriteStream(__dirname+"/../error.log"))
     const d = new Date()
     const h = d.getHours()
     const m = d.getMinutes()
@@ -28,7 +31,11 @@ function print(type="WARN",message="Default print text!")
     const TYPE = type.toUpperCase()
     const time = "["+CalcZero(h)+":"+CalcZero(m)+":"+CalcZero(s)+"]"
     const result = time+" - "+TYPE+" - "+message
-    console[type.toLowerCase()](result)
+    if(console[type.toLowerCase()])
+    {
+        console[type.toLowerCase()](result)
+        fileconsole[type.toLowerCase()](result)
+    }
 }
 /**
  * Fast way to print debug stuff
@@ -36,10 +43,7 @@ function print(type="WARN",message="Default print text!")
  */
 function Dprint(message="")
 {
-    if(debug)
-    {
-        print("debug",message)
-    }
+    print("debug",message)
 }
 /**
  * A Random Number Generator with Range
@@ -105,4 +109,3 @@ module.exports =
     RGBA:RGBA,
     IsNumberNegative:IsNumberNegative
 }
-print("info","Initialized Utils Module")

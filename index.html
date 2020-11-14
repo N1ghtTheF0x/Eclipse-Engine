@@ -27,7 +27,8 @@
                 bottom: 0;
                 color: white;
                 user-select: none;
-                
+                background-color: black;
+                opacity: 0.35;
             }
             p
             {
@@ -35,7 +36,10 @@
             }
         </style>
     </head>
-    <body>
+    <body onload="Init()">
+        <div id="Game">
+
+        </div>
         <debug id="debugtag">
             <p>FPS: <span id="dfps"></span></p>
             <p>PRESSED: <span id="pressed"></span></p>
@@ -50,5 +54,15 @@
         </debug>
 
     </body>
-    <script src="main.js"></script>
+    <script>
+        function Init()
+        {
+            const SCRIPT = document.createElement("script")
+            SCRIPT.src = "./main.js"
+            if(document.getElementById("Game"))
+            {
+                document.getElementById("Game").append(SCRIPT)
+            }
+        }
+    </script>
 </html>

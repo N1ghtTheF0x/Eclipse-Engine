@@ -6,6 +6,12 @@ const utils = require("./utils")
  */
 const canvas = document.createElement("canvas")
 
+const FPS =
+{
+    passed:0,
+    old:0
+}
+
 canvas.height = window.screen.height
 canvas.width = window.screen.width
 /**
@@ -80,7 +86,7 @@ function InitBuffers(positions=[-1.0,1.0])
 }
 const ProgramInfo =
 {
-    program:undefined||new WebGLProgram(),
+    program:undefined,
     attribLocations:
     {
         vertexPosition:undefined
@@ -93,13 +99,10 @@ const ProgramInfo =
 }
 function FramesPerSecondCalc(time=0)
 {
-    const passed=(time-game.oldtime)/1000
-    const oldtime=time
-    const fps=Math.round(1/game.passed)
-    if(document.getElementById("dfps"))
-    {
-        document.getElementById("dfps").innerHTML = fps
-    }
+    FPS.passed=(time-FPS.old)/1000
+    FPS.old=time
+    const fps=Math.round(1/FPS.passed)
+    return fps
 }
 /**
  * Here you can find all important variables to Rendering
@@ -107,7 +110,6 @@ function FramesPerSecondCalc(time=0)
 module.exports =
 {
     canvas:canvas,
-    drawFaktor:drawFaktor,
     ctx:ctx,
     gl:gl,
     clear:Clear,
@@ -118,4 +120,3 @@ module.exports =
     InitBuffers:InitBuffers,
     fpsc:FramesPerSecondCalc
 }
-util.print("info","Initialized Render Module")
