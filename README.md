@@ -1,4 +1,4 @@
-![](https://n1ghtthef0x.github.io/webpage/Logo_EclipseEngine_Transparent.png =120x120)
+<!--![](https://n1ghtthef0x.github.io/webpage/Logo_EclipseEngine_Transparent.png =120x120)-->
 # Eclipse-Engine
 A Game Engine using Electron, Javascript and the HTML5 Canvas feature
 ## Dependencies
