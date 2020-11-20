@@ -1,107 +1,106 @@
 const fs = require("fs")
 const matrix = require("gl-matrix")
 const utils = require("./utils")
-/**
- * The Main Canvas. Everything is here.
- */
-const canvas = document.createElement("canvas")
+const input = require("./input")
 
-const FPS =
+class ERender
 {
-    passed:0,
-    old:0
-}
-
-canvas.height = window.screen.height
-canvas.width = window.screen.width
-/**
- * Software Render Context
- */
-const ctx = canvas.getContext("2d")
-// This removes the blur effect
-ctx.imageSmoothingEnabled=false
-/**
- * Hardware Render Context
- */
-const gl = canvas.getContext("webgl2")
-function Clear(hardware=false)
-{
-    if(hardware)
+    constructor(WINDOW=window)
     {
-        gl.clearColor(0,0,0,0)
-        gl.clearDepth(1.0)
-        gl.enable(gl.DEPTH_TEST)
-        gl.depthFunc(gl.LEQUAL)
-        gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT)
+        this.window = WINDOW
+        this.canvas = this.window.document.createElement("canvas")
+        this.input = new input(this.window)
+        this.FPS =
+        {
+            passed:0,
+            old:0
+        }
+        this.canvas.height = this.window.screen.height
+        this.canvas.width = this.window.screen.width
+        this.ctx = this.canvas.getContext("2d")
+        this.ctx.imageSmoothingEnabled=false
+        this.gl = this.canvas.getContext("webgl2")
+        this.ProgramInfo =
+        {
+            program:undefined,
+            attribLocations:
+            {
+                vertexPosition:undefined
+            },
+            uniformLocations:
+            {
+                projectionMatrix:undefined,
+                modelViewMatrix:undefined
+            }
+        }
     }
-    else
+    Clear(hardware=false)
     {
-        ctx.clearRect(0,0,canvas.width,canvas.height)
+        if(hardware)
+        {
+            this.gl.clearColor(0,0,0,0)
+            this.gl.clearDepth(1.0)
+            this.gl.enable(this.gl.DEPTH_TEST)
+            this.gl.depthFunc(this.gl.LEQUAL)
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT)
+        }
+        else
+        {
+            this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
+        }
     }
-}
-/**
- * Returns a compiled shader if successful
- * @param {number} type - The type of shader: Fragment or Vertex
- * @param {string} path - Path to the Shader's source file
- */
-function GetShader(type=gl.VERTEX_SHADER,path="")
-{
-    const shader = gl.createShader(type)
-    gl.shaderSource(shader,fs.readFileSync(path,{encoding:"utf-8"}))
-    gl.compileShader(shader)
-    if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS))
+    /**
+    * Returns a compiled shader if successful
+    * @param {number} type - The type of shader: Fragment or Vertex
+    * @param {string} path - Path to the Shader's source file
+    */
+    GetShader(type=this.gl.VERTEX_SHADER,path="")
     {
-        utils.print("error","Shader compiling failed with "+path+":\n\n"+gl.getShaderInfoLog(shader))
-        gl.deleteShader(shader)
-        return null
+        const shader = this.gl.createShader(type)
+        this.gl.shaderSource(shader,fs.readFileSync(path,{encoding:"utf-8"}))
+        this.gl.compileShader(shader)
+        if(!this.gl.getShaderParameter(shader,this.gl.COMPILE_STATUS))
+        {
+            utils.print("error","Shader compiling failed with "+path+":\n\n"+this.gl.getShaderInfoLog(shader))
+            this.gl.deleteShader(shader)
+            return null
+        }
+        return shader
     }
-    return shader
-}
-/**
- * Returns the Shader Program of one Vertex and Fragment Shader
- * @param {string} vertexPath - Path to the Vertex Shader's source file
- * @param {string} fragmentPath - Path to the Fragment Shader's source file
- */
-function GetShaderProgram(vertexPath="",fragmentPath="")
-{
-    const Vs = GetShader(gl.VERTEX_SHADER,vertexPath)
-    const Fs = GetShader(gl.FRAGMENT_SHADER,fragmentPath)
-    const shaderprogram = gl.createProgram()
-    gl.attachShader(shaderprogram,Vs)
-    gl.attachShader(shaderprogram,Fs)
-    gl.linkProgram(shaderprogram)
-    if(!gl.getProgramParameter(shaderprogram,gl.LINK_STATUS))
+    /**
+    * Returns the Shader Program of one Vertex and Fragment Shader
+    * @param {string} vertexPath - Path to the Vertex Shader's source file
+    * @param {string} fragmentPath - Path to the Fragment Shader's source file
+    */
+    GetShaderProgram(vertexPath="",fragmentPath="")
     {
-        utils.print("error","Shader Program not initialized:\n\n"+gl.getProgramInfoLog(shaderprogram))
-        return null
+        const Vs = GetShader(this.gl.VERTEX_SHADER,vertexPath)
+        const Fs = GetShader(this.gl.FRAGMENT_SHADER,fragmentPath)
+        const shaderprogram = this.gl.createProgram()
+        this.gl.attachShader(shaderprogram,Vs)
+        this.gl.attachShader(shaderprogram,Fs)
+        this.gl.linkProgram(shaderprogram)
+        if(!this.gl.getProgramParameter(shaderprogram,this.gl.LINK_STATUS))
+        {
+            utils.print("error","Shader Program not initialized:\n\n"+this.gl.getProgramInfoLog(shaderprogram))
+            return null
+        }
+        return shaderprogram
     }
-    return shaderprogram
-}
-function InitBuffers(positions=[-1.0,1.0])
-{
-    const pB = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER,pB)
-    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(positions),gl.STATIC_DRAW)
-    return pB
-}
-const ProgramInfo =
-{
-    program:undefined,
-    attribLocations:
+    GetBuffers(positions=[-1.0,1.0])
     {
-        vertexPosition:undefined
-    },
-    uniformLocations:
-    {
-        projectionMatrix:undefined,
-        modelViewMatrix:undefined
+        const pB = this.gl.createBuffer()
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER,pB)
+        this.gl.bufferData(this.gl.ARRAY_BUFFER,new Float32Array(positions),this.gl.STATIC_DRAW)
+        return pB
     }
+    
 }
-function FramesPerSecondCalc(time=0)
+function FramesPerSecondCalc(Render=new ERender(),time=0)
 {
-    FPS.passed=(time-FPS.old)/1000
-    FPS.old=time
-    const fps=Math.round(1/FPS.passed)
+    Render.FPS.passed=(time-Render.FPS.old)/1000
+    Render.FPS.old=time
+    const fps=Math.round(1/Render.FPS.passed)
     return fps
 }
 /**
@@ -109,14 +108,6 @@ function FramesPerSecondCalc(time=0)
  */
 module.exports =
 {
-    canvas:canvas,
-    ctx:ctx,
-    gl:gl,
-    clear:Clear,
-    glProgramInfo:ProgramInfo,
-    matrix:matrix,
-    GetShader:GetShader,
-    GetShaderProgram:GetShaderProgram,
-    InitBuffers:InitBuffers,
-    fpsc:FramesPerSecondCalc
+    render:ERender,
+    FPSC:FramesPerSecondCalc
 }

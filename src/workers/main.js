@@ -5,7 +5,16 @@ const util = require("./../utils")
 const update = require("./update")
 const draw = require("./draw")
 
-function main(Mtimestamp=0)
+function ERequestAnimationFrame(game=require("./../game"),callback=function(time=0,Render=new render.render()){},Render=new render.render())
+{
+    game.intervalUpdate(requestAnimationFrame(function(time)
+    {
+        callback(time,Render)
+    }))
+    ERequestAnimationFrame(game,callback,Render)
+}
+
+function main(Mtimestamp=0,Render=new render.render())
 {
     try
     {
@@ -21,32 +30,36 @@ function main(Mtimestamp=0)
         }
         if(document.getElementById("dfps"))
         {
-            const FPS = render.fpsc(timestamp)
+            const FPS = render.FPSC(Render,timestamp)
             document.getElementById("dfps").innerText = FPS
         }
         //new Worker("./src/workers/update.js",{workerData:game.main.current.updateFunc})
         new Worker("./src/workers/draw.js",{workerData:game.main.current.eobjects})
-        update(game.main.current.updateFunc)
-        draw(game.main.current.eobjects)
-        if(options.refreshMethod==="raf")
-        {
-            game.intervalUpdate(requestAnimationFrame(main))
-        }
-        else if(options.refreshMethod==="si")
-        {
-            game.intervalUpdate(setInterval(main,1000/60))
-        }
-        else if(options.refreshMethod==="to")
-        {
-            game.intervalUpdate(setTimeout(main,1000/60))
-        }
+        update(Render,game.main.current.updateFunc)
+        draw(Render,game.main.current.eobjects)
     }
     catch(err)
     {
         throw err
     }
 }
+function MAIN(Render=new render.render())
+{
+    const game = require("./../game")
+    if(options.refreshMethod==="raf")
+    {
+        ERequestAnimationFrame(game,main,Render)
+    }
+    else if(options.refreshMethod==="si")
+    {
+        game.intervalUpdate(setInterval(mein,1000/60))
+    }
+    else if(options.refreshMethod==="to")
+    {
+        game.intervalUpdate(setTimeout(mein,1000/60))
+    }
+}
 module.exports =
 {
-    main:main
+    main:MAIN
 }

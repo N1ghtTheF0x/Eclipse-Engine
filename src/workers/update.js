@@ -1,7 +1,7 @@
 const utils = require("./../utils")
-const controls = require("./../input").controls
-function Tick(UpdateFunction=function(controls=controls){})
+const render = require("./../render")
+function Tick(Render=new render.render(),UpdateFunction=function(Render=new render.render()){})
 {
-    UpdateFunction(controls)
+    UpdateFunction(Render)
 }
 module.exports = Tick
