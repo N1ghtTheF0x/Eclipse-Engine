@@ -1,6 +1,6 @@
 const util = require("./../utils")
 const render = require("./../render")
-const options = require("./../../options.json")
+const options = require("./../options")
 const eobjectM = require("./../objects")
 
 /*function HardwareDraw(Render=new render.render(),programInfo=Render.glProgramInfo,buffers=Render.InitBuffers())
@@ -61,7 +61,7 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
 function Tick(Render=new render.render(),objects)
 {
     Render.Clear(options.hardware)
-    if(options.hardware)
+    if(options.get().hardware)
     {
         //HardwareDraw()
     }

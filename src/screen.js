@@ -2,7 +2,6 @@ const Mobjects = require("./objects")
 const Maudio = require("./audio")
 const game = require("./game")
 const util = require("./utils")
-const Controls = require("./input").controls
 
 class EScreen
 {

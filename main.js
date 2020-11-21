@@ -5,6 +5,7 @@ const escreen = require("./src/screen")
 const game = require("./src/game")
 const fs = require("fs")
 const electron = require("electron").remote
+const options = require("./src/options")
 util.print("info","Starting game...")
 util.print("info","Creating Render...")
 const Render = new render.render(window)
@@ -27,5 +28,6 @@ else
     electron.dialog.showMessageBoxSync(null,{title:"No Init Script!",message:"There's no Init Script in the Game folder!",detail:"Contact the Developer!",type:"warning",buttons:["Ok"]})
     escreen.SwitchToEScreen("dummy",0)
 }
-
+options.has(true)
+game.OptionsUpdate(options.get())
 mainWorker(Render)

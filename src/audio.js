@@ -1,5 +1,5 @@
 const util = require("./utils")
-const options = require("./../options.json")
+const options = require("./options")
 var idGiver = 0
 class EAudio
 {
@@ -47,7 +47,7 @@ class EAudio
      */
     play(ms=0)
     {
-        if(!options.mute)
+        if(!options.get().mute)
         {
             this._audio.currentTime=ms*1000
             const SRC = this.src

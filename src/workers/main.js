@@ -1,4 +1,4 @@
-const options = require("./../../options.json")
+const options = require("./../options.js")
 const render = require("./../render")
 const util = require("./../utils")
 
@@ -9,18 +9,9 @@ function main(Mtimestamp=0)
 {
     const game = require("./../game")
     const Render = game.main.render
-    var timestamp = 0
-    if(options.refreshMethod==="raf")
-    {
-        timestamp = Mtimestamp
-    }
-    else
-    {
-        timestamp = performance.now()
-    }
     if(document.getElementById("dfps"))
     {
-        const FPS = render.FPSC(Render,timestamp)
+        const FPS = render.FPSC(Render,Mtimestamp)
         document.getElementById("dfps").innerText = FPS
     }
     update(Render,game.main.current.updateFunc)

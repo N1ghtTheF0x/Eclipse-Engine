@@ -1,6 +1,7 @@
 const eobjectM = require("./objects")
 const render = require("./render")
 const utils = require("./utils")
+const OPTIONS = require("./options")
 
 class EGame
 {
@@ -23,6 +24,14 @@ class EGame
         }
         this.interval = 0
         this.render = undefined||new render.render()
+        this.options = {
+            mute:false,
+            discordrpc:
+            {
+                id:"",
+                token:""
+            }
+        }
     }
 }
 
@@ -46,11 +55,17 @@ function UpdateInterval(interval=0)
 {
     game.interval=interval
 }
+function UpdateOptions(optionsOBJ={})
+{
+    game.options=optionsOBJ
+    OPTIONS.write(game.options)
+}
 module.exports =
 {
     main:game,
     update:UpdateGame,
     intervalUpdate:UpdateInterval,
     renderUpdate:UpdateRender,
-    class:EGame
+    class:EGame,
+    OptionsUpdate:UpdateOptions
 }

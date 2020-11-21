@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "A Game Engine using Electron, Javascript and the HTML5 Canvas feature",
   "main": "index.js",
-  "author": "N1ghtTheF0x",
+  "author": {
+    "name":"N1ghtTheF0x",
+    "email": "kil.night.prower@gmail.com"
+  },
   "license": "MIT",
   "private": true,
   "dependencies": {
@@ -22,10 +25,39 @@
   },
   "build": {
     "productName": "Eclipse Engine",
+    "copyright":"Copyright © 2020 N1ghtTheF0x",
     "appId": "org.eclipseteam.ee",
     "win": {
-      "icon": "./textures/icon.ico"
-    }
+      "icon": "./textures/icon.ico",
+      "target":[
+        {
+          "target":"msi",
+          "arch":[
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "files":
+    [
+      "./src/game/",
+      "./index.js",
+      "./sound/",
+      "./textures/",
+  "**/*",
+  "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+  "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+  "!**/node_modules/*.d.ts",
+  "!**/node_modules/.bin",
+  "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+  "!.editorconfig",
+  "!**/._*",
+  "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+  "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+  "!**/{appveyor.yml,.travis.yml,circle.yml}",
+  "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+    ]
   },
   "repository": {
     "url": "https://github.com/N1ghtTheF0x/Eclipse-Engine"
