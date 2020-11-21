@@ -1,4 +1,3 @@
-//require("gamecontroller.js")
 const util = require("./utils")
 
 class EInput
@@ -7,6 +6,7 @@ class EInput
     {
         this.window = WINDOW
         this.lastInputDevice = "keyboard"
+        this.gameController = this.window.navigator.getGamepads()[0]
         this.cursor =
         {
             x:0,
@@ -15,15 +15,11 @@ class EInput
         }
         this.controllerPressed=
         {
-            up1:false,
-            down1:false,
-            left1:false,
-            right1:false,
+            joyX1:0,
+            joyY1:0,
             joy1:false,
-            up2:false,
-            down2:false,
-            left2:false,
-            right2:false,
+            joyX2:0,
+            joyY2:0,
             joy2:false,
             A:false,
             B:false,
@@ -36,246 +32,55 @@ class EInput
             dleft:false,
             ddown:false,
             dright:false,
-            ls:false,
-            lt:false,
+            ls:0,
+            lt:0,
             rs:false,
             rt:false
         }
         this.keyboardPressed=
         {
-    
+            lastKey:""
+        }
+    }
+    ControllerUpdate()
+    {
+        const newgamepad = this.window.navigator.getGamepads()[0]
+        if(newgamepad)
+        {
+            this.controllerPressed.A=newgamepad.buttons[0].pressed // A
+            this.controllerPressed.B=newgamepad.buttons[1].pressed // B
+            this.controllerPressed.X=newgamepad.buttons[2].pressed // X
+            this.controllerPressed.Y=newgamepad.buttons[3].pressed // Y
+
+            this.controllerPressed.ls=newgamepad.buttons[4].pressed // Left shoulder
+            this.controllerPressed.rs=newgamepad.buttons[5].pressed // right shoulder
+
+            this.controllerPressed.lt=newgamepad.buttons[6].pressed // left trigger
+            this.controllerPressed.rt=newgamepad.buttons[7].pressed // right trigger
+            
+            this.controllerPressed.select=newgamepad.buttons[8].pressed // select/back
+            this.controllerPressed.start=newgamepad.buttons[9].pressed // start/forward
+
+            this.controllerPressed.joy1=newgamepad.buttons[10].pressed // Left Joystick Press
+            this.controllerPressed.joy2=newgamepad.buttons[11].pressed // Right Joystick Press
+
+            this.controllerPressed.dup=newgamepad.buttons[12].pressed // Dpad Up
+            this.controllerPressed.ddown=newgamepad.buttons[13].pressed // Dpad Down
+            this.controllerPressed.dleft=newgamepad.buttons[14].pressed // Dpad Left
+            this.controllerPressed.dright=newgamepad.buttons[15].pressed // Dpad Right
+
+            this.controllerPressed.power=newgamepad.buttons[16].pressed // Xbox Button/PS Button/Power Button
+
+
+            this.controllerPressed.joyX1=newgamepad.axes[0] // Left Joystick X-Position
+            this.controllerPressed.joyY1=newgamepad.axes[1] // Left Joystick Y-Position
+
+            this.controllerPressed.joyX2=newgamepad.axes[2] // Right Joystick X-Position
+            this.controllerPressed.joyY2=newgamepad.axes[3] // Right Joystick Y-Position
         }
     }
     Init(controls=new EInput())
     {
-        /*gameControl.on("connect",function(gamepad)
-        {
-            gamepad.on("button0",function()
-            {
-                controls.controllerPressed.A=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.A=false
-            })
-            gamepad.on("button1",function()
-            {
-                controls.controllerPressed.B=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.B=false
-            })
-            gamepad.on("button2",function()
-            {
-                controls.controllerPressed.X=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.X=false
-            })
-            gamepad.on("button3",function()
-            {
-                controls.controllerPressed.Y=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.Y=false
-            })
-            gamepad.on("button4",function()
-            {
-                controls.controllerPressed.ls=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.ls=false
-            })
-            gamepad.on("button5",function()
-            {
-                controls.controllerPressed.rs=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.rs=false
-            })
-            gamepad.on("button6",function()
-            {
-                controls.controllerPressed.lt=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.lt=false
-            })
-            gamepad.on("button7",function()
-            {
-                controls.controllerPressed.rt=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.rt=false
-            })
-            gamepad.on("button8",function()
-            {
-                controls.controllerPressed.select=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.select=false
-            })
-            gamepad.on("button9",function()
-            {
-                controls.controllerPressed.start=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.start=false
-            })
-            gamepad.on("button10",function()
-            {
-                controls.controllerPressed.joy1=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.joy1=false
-            })
-            gamepad.on("button11",function()
-            {
-                controls.controllerPressed.joy2=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.joy2=false
-            })
-            gamepad.on("button12",function()
-            {
-                controls.controllerPressed.dup=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.dup=false
-            })
-            gamepad.on("button13",function()
-            {
-                controls.controllerPressed.ddown=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.ddown=false
-            })
-            gamepad.on("button14",function()
-            {
-                controls.controllerPressed.dleft=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.dleft=false
-            })
-            gamepad.on("button15",function()
-            {
-                controls.controllerPressed.dright=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.dright=false
-            })
-            gamepad.on("button16",function()
-            {
-                controls.controllerPressed.power=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.power=false
-            })
-            gamepad.on("up0",function()
-            {
-                controls.controllerPressed.up1=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.up1=false
-            })
-            gamepad.on("down0",function()
-            {
-                controls.controllerPressed.down1=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.down1=false
-            })
-            gamepad.on("left0",function()
-            {
-                controls.controllerPressed.left1=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.left1=false
-            })
-            gamepad.on("right0",function()
-            {
-                controls.controllerPressed.right1=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.right1=false
-            })
-            gamepad.on("up1",function()
-            {
-                controls.controllerPressed.up2=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.up2=false
-            })
-            gamepad.on("down1",function()
-            {
-                controls.controllerPressed.down2=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.down2=false
-            })
-            gamepad.on("left1",function()
-            {
-                controls.controllerPressed.left2=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.left2=false
-            })
-            gamepad.on("right1",function()
-            {
-                controls.controllerPressed.right2=true
-                controls.lastInputDevice="controller"
-            })
-            .after(function()
-            {
-                controls.controllerPressed.right2=false
-            })
-        })*/
         this.window.document.addEventListener("keydown",function(event)
         {
             event.preventDefault()
@@ -283,6 +88,7 @@ class EInput
             controls.keyboardPressed[event.code]=true
             controls.keyboardPressed.plusALT=event.altKey
             controls.keyboardPressed.plusCTRL=event.ctrlKey
+            controls.keyboardPressed.lastKey=event.code
             controls.lastInputDevice="keyboard"
             util.Dprint("Player pressed on the Keyboard "+event.code)
             

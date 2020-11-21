@@ -6,7 +6,7 @@ const Controls = require("./input").controls
 
 class EScreen
 {
-    constructor(id="dummy",name="Dummy Screen Name",audio=[new Maudio.audio()],objects=[new Mobjects.door(),new Mobjects.main(),new Mobjects.player(),new Mobjects.playertemp(),new Mobjects.temp(),new Mobjects.trigger()],setup=function(){},update=function(controls=Controls){})
+    constructor(id="dummy",name="Dummy Screen Name",audio=[new Maudio.audio()],objects=[new Mobjects.door(),new Mobjects.main(),new Mobjects.player(),new Mobjects.playertemp(),new Mobjects.temp(),new Mobjects.trigger()],setup=function(){},update=function(Render=new render.render()){})
     {
         this.id = id
         this.name = name
@@ -52,10 +52,23 @@ function AddScreen(id="dummy",name="Dummy Screen Name",audio=[new Maudio.audio()
     }
 }
 
+function HasScreen(id="dummy")
+{
+    if(EScreens.has(id))
+    {
+        return true
+    }
+    else
+    {
+        return false
+    }
+}
+
 module.exports =
 {
     EScreen:EScreen,
     EScreens:EScreens,
     SwitchToEScreen:SwitchToEScreen,
-    add:AddScreen
+    add:AddScreen,
+    has:HasScreen
 }

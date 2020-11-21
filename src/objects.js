@@ -416,7 +416,7 @@ class ETileset
 function collision(obj1=new EObjectClass(),obj2=new EObjectClass())
 {
     const right = (obj1.x+obj1.w)>=(obj2.x)
-    const left = (ob2.x+obj2.w)>=(obj1.x)
+    const left = (obj2.x+obj2.w)>=(obj1.x)
     const bottom = (obj1.y+obj1.h)>=(obj2.y)
     const top = (obj2.y+obj2.h)>=(obj1.y)
     return {top:top,left:left,bottom:bottom,right:right}

@@ -7,14 +7,12 @@ These are all the libraries I'm using:
 |--|--|
 |`electron`|https://www.electronjs.org/|
 |`discord.js / discord-rpc`|https://discord.js.org/|
-|`gamecontroller.js`|https://github.com/alvaromontoro/gamecontroller.js *(not for too long)*|
 |`gl-matrix`|http://glmatrix.net/|
 |`socket.io / socket.io-client`|https://socket.io/|
 |`electron-builder`|https://www.electron.build/|
 ## Features
 
  - Screen Manager
- - Thread Drawing/Updating
  - Discord Rich Presence
  - Networking
  - Hardware (WebGL) / Software (2D-Context) Render

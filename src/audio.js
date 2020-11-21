@@ -1,4 +1,5 @@
 const util = require("./utils")
+const options = require("./../options.json")
 var idGiver = 0
 class EAudio
 {

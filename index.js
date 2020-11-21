@@ -10,7 +10,8 @@ function Window()
                 nodeIntegration:true,
                 nodeIntegrationInSubFrames:true,
                 nodeIntegrationInWorker:true,
-                enableRemoteModule:true
+                enableRemoteModule:true,
+                worldSafeExecuteJavaScript:true
             },
             width:640,
             height:400,

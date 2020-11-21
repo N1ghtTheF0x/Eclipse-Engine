@@ -2,10 +2,10 @@
 node_modules
 # no options file for you!
 options.json
-# no game src
-src/game
 # no logs
 error.log
 out.log
-# no textures
+# no game related things
 textures
+src/game
+sound
