@@ -1,5 +1,55 @@
 const util = require("./utils")
 
+class EMouse
+{
+    constructor()
+    {
+        this.x = 0
+        this.y = 0
+        this.left = false
+        this.right = false
+        this.middle = false
+        this.forward = false
+        this.backward = false
+    }
+}
+
+class EController
+{
+    constructor()
+    {
+        this.joyX1=0
+        this.joyY1=0
+        this.joy1=false
+        this.joyX2=0
+        this.joyY2=0
+        this.joy2=false
+        this.A=false
+        this.B=false
+        this.X=false
+        this.Y=false
+        this.start=false
+        this.select=false
+        this.power=false
+        this.dup=false
+        this.dleft=false
+        this.ddown=false
+        this.dright=false
+        this.ls=0
+        this.lt=0
+        this.rs=false
+        this.rt=false
+    }
+}
+
+class EKeyboard
+{
+    constructor()
+    {
+        this.lastKey = ""
+    }
+}
+
 class EInput
 {
     constructor(WINDOW=window)
@@ -7,40 +57,9 @@ class EInput
         this.window = WINDOW
         this.lastInputDevice = "keyboard"
         this.gameController = this.window.navigator.getGamepads()[0]
-        this.cursor =
-        {
-            x:0,
-            y:0,
-            clicked:false
-        }
-        this.controllerPressed=
-        {
-            joyX1:0,
-            joyY1:0,
-            joy1:false,
-            joyX2:0,
-            joyY2:0,
-            joy2:false,
-            A:false,
-            B:false,
-            X:false,
-            Y:false,
-            start:false,
-            select:false,
-            power:false,
-            dup:false,
-            dleft:false,
-            ddown:false,
-            dright:false,
-            ls:0,
-            lt:0,
-            rs:false,
-            rt:false
-        }
-        this.keyboardPressed=
-        {
-            lastKey:""
-        }
+        this.cursor = new EMouse()
+        this.controllerPressed=new EController()
+        this.keyboardPressed=new EKeyboard()
     }
     ControllerUpdate()
     {
@@ -55,8 +74,8 @@ class EInput
             this.controllerPressed.ls=newgamepad.buttons[4].pressed // Left shoulder
             this.controllerPressed.rs=newgamepad.buttons[5].pressed // right shoulder
 
-            this.controllerPressed.lt=newgamepad.buttons[6].pressed // left trigger
-            this.controllerPressed.rt=newgamepad.buttons[7].pressed // right trigger
+            this.controllerPressed.lt=newgamepad.buttons[6].value // left trigger
+            this.controllerPressed.rt=newgamepad.buttons[7].value // right trigger
             
             this.controllerPressed.select=newgamepad.buttons[8].pressed // select/back
             this.controllerPressed.start=newgamepad.buttons[9].pressed // start/forward
@@ -108,17 +127,57 @@ class EInput
         this.window.document.addEventListener("onmousedown",function(event)
         {
             event.preventDefault()
-            controls.cursor.clicked=true
+            if(event.button)
+            {
+                if(event.button===0) // Left Click
+                {
+                    controls.cursor.left=true
+                }
+                if(event.button===1) // Middle Wheel Click
+                {
+                    controls.cursor.middle=true
+                }
+                if(event.button===2) // right click
+                {
+                    controls.cursor.right=true
+                }
+                if(event.button===3) // side button up
+                {
+                    controls.cursor.forward=true
+                }
+                if(event.button===4) // side button down
+                {
+                    controls.cursor.backward=true
+                }
+            }
+            
         },false)
         this.window.document.addEventListener("onmouseup",function(event)
         {
             event.preventDefault()
-            controls.cursor.clicked=false
-        },false)
-        this.window.document.addEventListener("oncontextmenu",function(event)
-        {
-            event.preventDefault()
-            controls.cursor.rclicked=true
+            if(event.button)
+            {
+                if(event.button===0) // Left Click
+                {
+                    controls.cursor.left=false
+                }
+                if(event.button===1) // Middle Wheel Click
+                {
+                    controls.cursor.middle=false
+                }
+                if(event.button===2) // right click
+                {
+                    controls.cursor.right=false
+                }
+                if(event.button===3) // side button up
+                {
+                    controls.cursor.forward=false
+                }
+                if(event.button===4) // side button down
+                {
+                    controls.cursor.backward=false
+                }
+            }
         },false)
     }
 }

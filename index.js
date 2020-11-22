@@ -11,7 +11,8 @@ function Window()
                 nodeIntegrationInSubFrames:true,
                 nodeIntegrationInWorker:true,
                 enableRemoteModule:true,
-                worldSafeExecuteJavaScript:true
+                worldSafeExecuteJavaScript:true,
+                webgl:true
             },
             width:640,
             height:400,

@@ -18,7 +18,7 @@ class EScreen
 
 const EScreens = new Map([["dummy",new EScreen("dummy","Dummy Screen Name",[],[],function(){alert("This is a Dummy Screen.")},function(){})]])
 
-function SwitchToEScreen(id="dummy",level=0)
+function SwitchToEScreen(id="dummy",level=0,withSetup=true)
 {
     if(EScreens.has(id))
     {
@@ -30,6 +30,11 @@ function SwitchToEScreen(id="dummy",level=0)
             eobjects:Screen.objects
         })
         util.print("info","Switched from Screen "+game.main.old.screen+" to "+id)
+        if(withSetup)
+        {
+            util.print("info","Executing setup function...")
+            Screen.setup()
+        }
     }
     else
     {

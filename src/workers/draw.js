@@ -2,36 +2,95 @@ const util = require("./../utils")
 const render = require("./../render")
 const options = require("./../options")
 const eobjectM = require("./../objects")
+const game = require("./../game")
 
-/*function HardwareDraw(Render=new render.render(),programInfo=Render.glProgramInfo,buffers=Render.InitBuffers())
+function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
 {
-    const FOV = 45*Math.PI/180
-    const Aspect = Render.canvas.clientWidth/render.canvas.clientHeight
-    const zNear = 0.1
-    const zFar = 100.0
-    const projectionMatrix = render.matrix.mat4.create()
-    render.matrix.mat4.perspective(projectionMatrix,FOV,Aspect,zNear,zFar)
-    const modelViewMatrix = render.matrix.mat4.create()
-    render.matrix.mat4.translate(modelViewMatrix,modelViewMatrix,[])
+    function RenderEObject(eobject=new eobjectM.main())
     {
-        const numC = 2
-        const type = render.gl.FLOAT
-        const normalize = false
-        const stride = 0
-        const offset = 0
-        render.gl.bindBuffer(render.gl.ARRAY_BUFFER,buffers)
-        render.gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition,numC,type,normalize,stride,offset)
-        render.gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
+        function SetRectangle(x=0,y=0,width=0,height=0)
+        {
+            const x1 = x
+            const x2 = x+width
+            
+            const y1 = y
+            const y2 = y+height
+            Render.gl.bufferData(Render.gl.ARRAY_BUFFER,new Float32Array([
+                x1,y1,
+                x2,y1,
+                x1,y2,
+                x1,y2,
+                x2,y1,
+                x2,y2
+            ]),Render.gl.STATIC_DRAW)
+        }
+        const program = Render.GetShaderProgram("./../shaders/image_vertex.glsl","./../shaders/image_fragment.glsl")
+        if(program!==null)
+        {
+            const PosAttribute = Render.gl.getAttribLocation(program,"pos")
+            const TexAttribute = Render.gl.getAttribLocation(program,"texpos")
+
+            const PosBuffer = Render.gl.createBuffer()
+            const TexBuffer = Render.gl.createBuffer()
+
+            Render.gl.bindBuffer(Render.gl.ARRAY_BUFFER,PosBuffer)
+            SetRectangle(eobject.x,eobject.y,eobject.w,eobject.h)
+
+            Render.gl.bindBuffer(Render.gl.ARRAY_BUFFER,TexBuffer)
+            Render.gl.bufferData(Render.gl.ARRAY_BUFFER,new Float32Array([
+                0.0,0.0,
+                1.0,0.0,
+                0.0,1.0,
+                0.0,1.0,
+                1.0,0.0,
+                1.0,1.0
+            ]),Render.gl.STATIC_DRAW)
+
+            const texture = Render.gl.createTexture()
+            Render.gl.bindTexture(Render.gl.TEXTURE_2D,texture)
+
+            Render.gl.texParameteri(Render.gl.TEXTURE_2D,Render.gl.TEXTURE_WRAP_S,Render.gl.CLAMP_TO_EDGE)
+            Render.gl.texParameteri(Render.gl.TEXTURE_2D,Render.gl.TEXTURE_WRAP_T,Render.gl.CLAMP_TO_EDGE)
+            Render.gl.texParameteri(Render.gl.TEXTURE_2D,Render.gl.TEXTURE_MIN_FILTER,Render.gl.NEAREST)
+            Render.gl.texParameteri(Render.gl.TEXTURE_2D,Render.gl.TEXTURE_MAG_FILTER,Render.gl.NEAREST)
+
+            Render.gl.texImage2D(Render.gl.TEXTURE_2D,0,Render.gl.RGBA,Render.gl.RGBA,Render.gl.UNSIGNED_BYTE,eobject._image)
+
+            Render.SetResolution(Render.window.screen.width,Render.window.screen.height)
+
+            Render.gl.viewport(0,0,Render.canvas.width,Render.canvas.height)
+
+            Render.gl.useProgram(program)
+
+            Render.gl.enableVertexAttribArray(PosAttribute)
+            Render.gl.bindBuffer(Render.gl.ARRAY_BUFFER,PosBuffer)
+            Render.gl.vertexAttribPointer(PosAttribute,2,Render.gl.FLOAT,false,0,0)
+
+            Render.gl.enableVertexAttribArray(TexAttribute)
+            Render.gl.bindBuffer(Render.gl.ARRAY_BUFFER,TexBuffer)
+            Render.gl.vertexAttribPointer(TexAttribute,2,Render.gl.FLOAT,false,0,0)
+
+            Render.gl.uniform2f(ResLoc,Render.canvas.width,Render.canvas.height)
+            Render.gl.drawArrays(Render.gl.TRIANGLES,0,6)
+        }
     }
-    render.gl.useProgram(programInfo.program)
-    render.gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix,false,projectionMatrix)
-    render.gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix,false,modelViewMatrix)
+    if(objects instanceof Array)
     {
-        const offset = 0
-        const vertexCount = 4
-        gl.drawArrays(gl.TRIANGLE_STRIP,offset,vertexCount)
+        for(const object of objects)
+        {
+            if(object)
+            {
+                if(object._image)
+                {
+                    if(object.x>(-20-object.w)||object.x<(Render.canvas.width+object.w))
+                    {
+                        RenderEObject(object)
+                    }
+                }
+            }
+        }
     }
-}*/
+}
 function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),new eobjectM.temp()])
 {
     if(objects instanceof Array)
@@ -51,7 +110,7 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
                     {
                         object._ctx.clearRect(0,0,object.w,object.h)
                         object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.w,object.h)
-                        Render.ctx.drawImage(object._canvas,0,0,object.w,object.h,object.x,object.y,object.w,object.h)
+                        Render.ctx.drawImage(object._canvas,0,0,object.w,object.h,object.x*Render.factor,object.y*Render.factor,object.w*Render.factor,object.h*Render.factor)
                     }
                 }
             }
@@ -60,14 +119,20 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
 }
 function Tick(Render=new render.render(),objects)
 {
-    Render.Clear(options.hardware)
-    if(options.get().hardware)
+    Render.Clear(game.main.options.hardware)
+    if(game.main.options.hardware)
     {
-        //HardwareDraw()
+        if(Render.gl!==null)
+        {
+            HardwareDraw(Render,objects)
+        }
     }
     else
     {
-        SoftwareDraw(Render,objects)
+        if(Render.ctx!==null)
+        {
+            SoftwareDraw(Render,objects)
+        }
     }
     
 }

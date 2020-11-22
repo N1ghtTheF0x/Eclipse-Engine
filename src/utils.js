@@ -4,7 +4,13 @@
  */
 function sleep(ms=1000)
 {
-    return new Promise(function(resolve=function(ms){}){setTimeout(resolve,ms)})
+    return new Promise(function(resolve=function(ms)
+    {
+
+    })
+    {
+        setTimeout(resolve,ms)
+    })
 }
 /**
  * A better and pretty print function. It shows when the print function got executed with an type like WARN, DEBUG, INFO, ERROR

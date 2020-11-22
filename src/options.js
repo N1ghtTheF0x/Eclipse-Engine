@@ -1,6 +1,22 @@
 const fs = require("fs")
 const game = require("./game")
 
+class EOptionTemplate
+{
+    constructor()
+    {
+        this.mute = false
+        this.discordrpc =
+        {
+            id:"",
+            tokem:""
+        }
+        this.hardware = false
+    }
+}
+
+const template = new EOptionTemplate()
+
 function HasOptions(write=false)
 {
     if(process.env.APPDATA)
@@ -14,7 +30,7 @@ function HasOptions(write=false)
         {
             if(write)
             {
-                WriteOptions({mute:false,discordrpc:{id:"",token:""},hardware:false})
+                WriteOptions(template)
             }
             return false
         }
@@ -31,17 +47,17 @@ function GetOptions()
         const path = process.env.APPDATA+"\\EclipseTeam\\options.json"
         if(HasOptions(true))
         {
-            const file = require(path)
-            return file
+            const file = fs.readFileSync(path,{encoding:"utf-8"})
+            return JSON.parse(file)
         }
         else
         {
-            return {}
+            return template
         }
     }
-    return {}
+    return template
 }
-function WriteOptions(optionsOBJ={})
+function WriteOptions(optionsOBJ=template)
 {
     if(process.env.APPDATA)
     {
@@ -54,5 +70,6 @@ module.exports =
 {
     has:HasOptions,
     get:GetOptions,
-    write:WriteOptions
+    set:WriteOptions,
+    template:EOptionTemplate
 }

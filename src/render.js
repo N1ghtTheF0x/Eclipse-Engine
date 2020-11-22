@@ -17,9 +17,18 @@ class ERender
         }
         this.canvas.height = this.window.screen.height
         this.canvas.width = this.window.screen.width
+        this.factor = 1
         this.ctx = this.canvas.getContext("2d")
+        if(this.ctx===null)
+        {
+            utils.print("warn","2D Render is not available!")
+        }
         this.ctx.imageSmoothingEnabled=false
         this.gl = this.canvas.getContext("webgl2")
+        if(this.gl===null)
+        {
+            utils.print("warn","WebGL Render is not available!")
+        }
         this.ProgramInfo =
         {
             program:undefined,
@@ -34,15 +43,42 @@ class ERender
             }
         }
     }
+    SetResolution(width=1920,height=1080)
+    {
+        if(width!==0)
+        {
+            if(height!==0)
+            {
+                this.canvas.height = height
+                this.canvas.width = width
+                this.factor = width/this.window.screen.width
+            }
+            else
+            {
+                utils.print("warn","Height cannot be 0!")
+            }
+        }
+        else
+        {
+            utils.print("warn","Width cannot be 0!")
+        }
+    }
+    GetResolution()
+    {
+        return {width:this.canvas.width,height:this.canvas.height}
+    }
     Clear(hardware=false)
     {
         if(hardware)
         {
-            this.gl.clearColor(0,0,0,0)
-            this.gl.clearDepth(1.0)
-            this.gl.enable(this.gl.DEPTH_TEST)
-            this.gl.depthFunc(this.gl.LEQUAL)
-            this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT)
+            if(this.gl!==null)
+            {
+                this.gl.clearColor(0,0,0,0)
+                this.gl.clearDepth(1.0)
+                this.gl.enable(this.gl.DEPTH_TEST)
+                this.gl.depthFunc(this.gl.LEQUAL)
+                this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT)
+            }
         }
         else
         {
@@ -56,16 +92,23 @@ class ERender
     */
     GetShader(type=this.gl.VERTEX_SHADER,path="")
     {
-        const shader = this.gl.createShader(type)
-        this.gl.shaderSource(shader,fs.readFileSync(path,{encoding:"utf-8"}))
-        this.gl.compileShader(shader)
-        if(!this.gl.getShaderParameter(shader,this.gl.COMPILE_STATUS))
+        if(this.gl!==null)
         {
-            utils.print("error","Shader compiling failed with "+path+":\n\n"+this.gl.getShaderInfoLog(shader))
-            this.gl.deleteShader(shader)
+            const shader = this.gl.createShader(type)
+            this.gl.shaderSource(shader,fs.readFileSync(path,{encoding:"utf-8"}))
+            this.gl.compileShader(shader)
+            if(!this.gl.getShaderParameter(shader,this.gl.COMPILE_STATUS))
+            {
+                utils.print("error","Shader compiling failed with "+path+":\n\n"+this.gl.getShaderInfoLog(shader))
+                this.gl.deleteShader(shader)
+                return null
+            }
+            return shader
+        }
+        else
+        {
             return null
         }
-        return shader
     }
     /**
     * Returns the Shader Program of one Vertex and Fragment Shader
@@ -74,18 +117,30 @@ class ERender
     */
     GetShaderProgram(vertexPath="",fragmentPath="")
     {
-        const Vs = GetShader(this.gl.VERTEX_SHADER,vertexPath)
-        const Fs = GetShader(this.gl.FRAGMENT_SHADER,fragmentPath)
-        const shaderprogram = this.gl.createProgram()
-        this.gl.attachShader(shaderprogram,Vs)
-        this.gl.attachShader(shaderprogram,Fs)
-        this.gl.linkProgram(shaderprogram)
-        if(!this.gl.getProgramParameter(shaderprogram,this.gl.LINK_STATUS))
+        if(this.gl!==null)
         {
-            utils.print("error","Shader Program not initialized:\n\n"+this.gl.getProgramInfoLog(shaderprogram))
+            const Vs = this.GetShader(this.gl.VERTEX_SHADER,vertexPath)
+            const Fs = this.GetShader(this.gl.FRAGMENT_SHADER,fragmentPath)
+            if(Vs===null||Fs===null)
+            {
+                return null
+            }
+            const shaderprogram = this.gl.createProgram()
+            this.gl.attachShader(shaderprogram,Vs)
+            this.gl.attachShader(shaderprogram,Fs)
+            this.gl.linkProgram(shaderprogram)
+            if(!this.gl.getProgramParameter(shaderprogram,this.gl.LINK_STATUS))
+            {
+                utils.print("error","Shader Program not initialized:\n\n"+this.gl.getProgramInfoLog(shaderprogram))
+                this.gl.deleteProgram(shaderprogram)
+                return null
+            }
+            return shaderprogram
+        }
+        else
+        {
             return null
         }
-        return shaderprogram
     }
     GetBuffers(positions=[-1.0,1.0])
     {
@@ -94,7 +149,6 @@ class ERender
         this.gl.bufferData(this.gl.ARRAY_BUFFER,new Float32Array(positions),this.gl.STATIC_DRAW)
         return pB
     }
-    
 }
 function FramesPerSecondCalc(Render=new ERender(),time=0)
 {

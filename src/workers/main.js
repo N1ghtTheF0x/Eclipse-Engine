@@ -19,9 +19,10 @@ function main(Mtimestamp=0)
     game.main.render.input.ControllerUpdate()
     game.intervalUpdate(Render.window.requestAnimationFrame(main))
 }
-function MAIN()
+function MAIN(Render=new render.render())
 {
     const game = require("./../game")
+    game.renderUpdate(Render)
     game.intervalUpdate(game.main.render.window.requestAnimationFrame(main))
     util.print("info","Started Main Worker")
 }

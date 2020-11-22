@@ -1,7 +1,7 @@
 const eobjectM = require("./objects")
 const render = require("./render")
 const utils = require("./utils")
-const OPTIONS = require("./options")
+const options = require("./options")
 
 class EGame
 {
@@ -24,14 +24,7 @@ class EGame
         }
         this.interval = 0
         this.render = undefined||new render.render()
-        this.options = {
-            mute:false,
-            discordrpc:
-            {
-                id:"",
-                token:""
-            }
-        }
+        this.options = {hardware:false,mute:false,discordrpc:{id:"",tokem:""}}
     }
 }
 
@@ -55,10 +48,10 @@ function UpdateInterval(interval=0)
 {
     game.interval=interval
 }
-function UpdateOptions(optionsOBJ={})
+function UpdateOptions(optionsOBJ=new options.template())
 {
     game.options=optionsOBJ
-    OPTIONS.write(game.options)
+    //options.set(game.options)
 }
 module.exports =
 {

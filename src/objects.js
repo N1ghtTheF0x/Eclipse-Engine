@@ -91,6 +91,7 @@ class EObjectTEMP extends EObjectClass
      * @param {number} h - Height | any value
      * @param {string} type - Type of object
      * @param {string} color - The color of the object, You can use RGBA(0,0,0,0) to get an invisible object
+     * @software
      */
     constructor(x=0,y=0,w=0,h=0,type="dummy",color="blue")
     {
@@ -122,6 +123,8 @@ class EObject extends EObjectClass
      * @param {number} h - Height
      * @param {string} type - Type
      * @param {string} spritesheet - Path to spritesheet 
+     * @software
+     * @hardware
      */
     constructor(x=0,y=0,w=0,h=0,type="dummy",spritesheet="none",)
     {
@@ -146,6 +149,10 @@ class EObject extends EObjectClass
          * Source Height of Picture
          */
         this.sh = this.h
+        /**
+         * Has the EObject caught an Error?
+         */
+        this.error = false
         this._image = new Image()
         try
         {
@@ -156,6 +163,7 @@ class EObject extends EObjectClass
             util.print("warn","Couldn't set Image to "+spritesheet+"! Using default image.")
             util.print("error",err)
             this._image.src = "./textures/unknown.png"
+            this.error=true
         }
         this._canvas = document.createElement('canvas')
         this._canvas.height = this.h
@@ -237,6 +245,7 @@ class EObjectPlayerTEMP extends EObjectTEMP
      * @param {number} w - Width
      * @param {number} h - Height
      * @param {string} color - The Color
+     * @software
      */
     constructor(x=0,y=0,w=0,h=0,color="")
     {
@@ -284,6 +293,8 @@ class EObjectPlayer extends EObject
      * @param {number} w - Width
      * @param {number} h - Height
      * @param {string} spritesheet - Path to the stylesheet 
+     * @software
+     * @hardware
      */
     constructor(x=0,y=0,w=0,h=0,spritesheet="")
     {
@@ -415,11 +426,51 @@ class ETileset
  */
 function collision(obj1=new EObjectClass(),obj2=new EObjectClass())
 {
-    const right = (obj1.x+obj1.w)>=(obj2.x)
+    /*const right = (obj1.x+obj1.w)>=(obj2.x)
     const left = (obj2.x+obj2.w)>=(obj1.x)
     const bottom = (obj1.y+obj1.h)>=(obj2.y)
     const top = (obj2.y+obj2.h)>=(obj1.y)
-    return {top:top,left:left,bottom:bottom,right:right}
+    return {top:top,left:left,bottom:bottom,right:right}*/
+    const vX=(obj1.x+(obj1.w/2))-(obj2.x+(obj2.w/2))
+    const vY=(obj1.y+(obj1.h/2))-(obj2.y+(obj2.h/2))
+
+    const hW=(obj1.w/2)+(obj2.w/2)
+    const hH=(obj1.h/2)+(obj2.h/2)
+
+    const dir = {top:false,left:false,bottom:false,right:false}
+
+    if(Math.abs(vX)<hW&&Math.abs(vY)<hH)
+    {
+        const oX = hW-Math.abs(vX)
+        const oY = hH-Math.abs(vY)
+        
+        if(oX>=oY)
+        {
+            if(vY>0)
+            {
+                dir.bottom=true
+                obj1.y+=oY
+            }
+            else
+            {
+                dir.top=true
+                obj1.y-=oY
+            }
+        }
+        else
+        {
+            if(vX>0)
+            {
+                dir.right=true
+                obj1.x+=oX
+            }
+            else
+            {
+                dir.left=true
+            }
+        }
+    }
+    return dir
 }
 const globals = {
     Gacc:0.046875,
