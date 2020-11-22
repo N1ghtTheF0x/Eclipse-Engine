@@ -10,3 +10,5 @@ textures
 src/game
 sound
 dist
+# no test files
+test.*
