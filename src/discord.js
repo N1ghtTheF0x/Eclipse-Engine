@@ -1,9 +1,9 @@
 const drpc = require("discord-rpc")
-const options = require("./options")
+const game = require("./game")
 const discord =
 {
-    id:options.get().discordrpc.id,
-    token:options.get().discordrpc.token,
+    id:game.main.options.discordrpc.id,
+    token:game.main.options.discordrpc.token,
     discordRPC:new drpc.Client({transport:"ipc"})
 }
 try
@@ -16,7 +16,7 @@ catch(err)
 }
 try
 {
-    discord.discordRPC.login({clientId:options.get().discordrpc.id,clientSecret:options.get().discordrpc.token}).catch(console.error).then(function(client)
+    discord.discordRPC.login({clientId:game.main.options.discordrpc.id,clientSecret:game.main.options.discordrpc.token}).catch(console.error).then(function(client)
     {
         util.print("info","Discord User Client detected!")
         util.print("info","Username: "+client.user.username)

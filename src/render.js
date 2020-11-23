@@ -5,44 +5,62 @@ const input = require("./input")
 
 class ERender
 {
+    /**
+     * This is the main Render. Here are all things related to your screen and drawn objects. The Input is also present here for Keyboard/Mouse/Gamepad detection
+     * @param {window} WINDOW - The window variable which contains **E V E R Y T H I N G**
+     */
     constructor(WINDOW=window)
     {
+        /**
+         * need a reference for canvas-creation and input
+         */
         this.window = WINDOW
-        this.canvas = this.window.document.createElement("canvas")
+        /**
+         * Render's personal input class
+         */
         this.input = new input(this.window)
+        /**
+         * **F**rames **P**er **S**econd shows how many frames are rendered in seconds. This is used to calculate the FPS
+         */
         this.FPS =
         {
             passed:0,
             old:0
         }
+        /**
+         * The main canvas. Everything is rendered on this
+         */
+        this.canvas = this.window.document.createElement("canvas")
         this.canvas.height = this.window.screen.height
         this.canvas.width = this.window.screen.width
+        /**
+         * The Draw factor. This is used to show objects in the same position when you set the resolution lower than your monitor's one
+         */
         this.factor = 1
+        /**
+         * The Software Context. CPU driven.
+         */
         this.ctx = this.canvas.getContext("2d")
         if(this.ctx===null)
         {
             utils.print("warn","2D Render is not available!")
         }
+        // Removes weird artefacting when using pictures with low resolution
         this.ctx.imageSmoothingEnabled=false
+        /**
+         * The Hardware Context. GPU driven.
+         */
         this.gl = this.canvas.getContext("webgl2")
         if(this.gl===null)
         {
             utils.print("warn","WebGL Render is not available!")
         }
-        this.ProgramInfo =
-        {
-            program:undefined,
-            attribLocations:
-            {
-                vertexPosition:undefined
-            },
-            uniformLocations:
-            {
-                projectionMatrix:undefined,
-                modelViewMatrix:undefined
-            }
-        }
     }
+    /**
+     * Set the canvas's resolution. **0 cannot be used as a parameter!**
+     * @param {number} width - Width of the new canvas
+     * @param {number} height - Height of the new canvas
+     */
     SetResolution(width=1920,height=1080)
     {
         if(width!==0)
@@ -67,6 +85,10 @@ class ERender
     {
         return {width:this.canvas.width,height:this.canvas.height}
     }
+    /**
+     * Clears the canvas
+     * @param {boolean} hardware - Should we use Hardware for clearing the screen?
+     */
     Clear(hardware=false)
     {
         if(hardware)
@@ -142,12 +164,15 @@ class ERender
             return null
         }
     }
-    GetBuffers(positions=[-1.0,1.0])
+    SetNewCanvas(WINDOW=window)
     {
-        const pB = this.gl.createBuffer()
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER,pB)
-        this.gl.bufferData(this.gl.ARRAY_BUFFER,new Float32Array(positions),this.gl.STATIC_DRAW)
-        return pB
+        this.window = WINDOW
+        this.canvas = this.window.document.createElement("canvas")
+        this.canvas.height = this.window.screen.height
+        this.canvas.width = this.window.screen.width
+        this.ctx = this.canvas.getContext("2d")
+        this.gl = this.canvas.getContext("webgl2")
+        this.factor = 1
     }
 }
 function FramesPerSecondCalc(Render=new ERender(),time=0)

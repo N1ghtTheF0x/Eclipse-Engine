@@ -1,7 +1,7 @@
 const fs = require("fs")
 const game = require("./game")
 
-class EOptionTemplate
+class EOptions
 {
     constructor()
     {
@@ -13,16 +13,21 @@ class EOptionTemplate
         }
         this.hardware = false
     }
-}
-
-const template = new EOptionTemplate()
-
-function HasOptions(write=false)
-{
-    if(process.env.APPDATA)
+    APPDATA()
     {
-        const path = process.env.APPDATA+"\\EclipseTeam\\options.json"
-        if(fs.existsSync(path))
+        return (process.env.APPDATA) ? process.env.APPDATA : false
+    }
+    ET_FOLDER()
+    {
+        return (this.APPDATA()!==false&&APPDATA+"\\EclipseTeam") ? this.APPDATA()+"\\EclipseTeam" : false
+    }
+    OPTIONS_FILE()
+    {
+        return (this.ET_FOLDER()!==false&&this.ET_FOLDER()+"\\options.json") ? this.ET_FOLDER()+"\\options.json" : false
+    }
+    HasOptions(write=false)
+    {
+        if(this.OPTIONS_FILE())
         {
             return true
         }
@@ -30,46 +35,45 @@ function HasOptions(write=false)
         {
             if(write)
             {
-                WriteOptions(template)
+                if(!this.APPDATA())
+                {
+                    if(!this.ET_FOLDER())
+                    {
+                        fs.mkdirSync(this.APPDATA()+"\\EclipseTeam",{recursive:true})
+                    }
+                    fs.writeFileSync(this.APPDATA()+"\\EclipseTeam\\options.json",{},{encoding:"utf-8"})
+                }
             }
             return false
         }
     }
-    else
+    /**
+     * @returns {EOptions}
+     */
+    GetOptions()
     {
-        return false
-    }
-}
-function GetOptions()
-{
-    if(process.env.APPDATA)
-    {
-        const path = process.env.APPDATA+"\\EclipseTeam\\options.json"
-        if(HasOptions(true))
+        if(this.OPTIONS_FILE())
         {
-            const file = fs.readFileSync(path,{encoding:"utf-8"})
-            return JSON.parse(file)
-        }
-        else
-        {
-            return template
+            const optionsFile = JSON.parse(fs.readFileSync(this.OPTIONS_FILE()))
+            if(optionsFile!=={})
+            {
+                return optionsFile
+            }
+            else
+            {
+                return null
+            }
         }
     }
-    return template
-}
-function WriteOptions(optionsOBJ=template)
-{
-    if(process.env.APPDATA)
+    WriteOptions(options=new EOptions())
     {
-        const path = process.env.APPDATA+"\\EclipseTeam\\options.json"
-        fs.mkdirSync(process.env.APPDATA+"\\EclipseTeam",{recursive:true})
-        fs.writeFileSync(path,JSON.stringify(optionsOBJ),{encoding:"utf-8"})
+        this.discordrpc=options.discordrpc
+        this.hardware=options.hardware
+        this.mute=options.mute
+        if(this.HasOptions(false))
+        {
+            fs.writeFileSync(this.OPTIONS_FILE(),JSON.stringify(this),{encoding:"utf-8"})
+        }
     }
 }
-module.exports =
-{
-    has:HasOptions,
-    get:GetOptions,
-    set:WriteOptions,
-    template:EOptionTemplate
-}
+module.exports = EOptions

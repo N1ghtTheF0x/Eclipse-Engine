@@ -27,6 +27,12 @@ class EObjectClass
         this._y = this.y
         this.my = this.y
         /**
+         * Z Position? *ok...*
+         */
+        this.z = 1
+        this._z = this.z
+        this.mz = this.z
+        /**
          * Width
          */
         this.w = w
@@ -156,7 +162,7 @@ class EObject extends EObjectClass
         this._image = new Image()
         try
         {
-            this._image.src = spritesheet
+            this._image.src = this.spritesheet
         }
         catch(err)
         {

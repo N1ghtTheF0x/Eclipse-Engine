@@ -13,18 +13,18 @@ class EGame
             level:0,
             screen:"dummy",
             updateFunc:function(Render=new render.render()){},
-            eobjects:[new eobjectM.main(0,0,0,0,"dummy",null),new eobjectM.temp()]
+            eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/unknown.png"),new eobjectM.temp()]
         }
         this.old =
         {
             level:0,
             screen:"dummy",
             updateFunc:function(Render=new render.render()){},
-            eobjects:[new eobjectM.main(0,0,0,0,"dummy",null),new eobjectM.temp()]
+            eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/unknown.png"),new eobjectM.temp()]
         }
         this.interval = 0
-        this.render = undefined||new render.render()
-        this.options = {hardware:false,mute:false,discordrpc:{id:"",tokem:""}}
+        this.render = undefined||new render.render(window,{},{},{})
+        this.options = {}
     }
 }
 
@@ -48,10 +48,10 @@ function UpdateInterval(interval=0)
 {
     game.interval=interval
 }
-function UpdateOptions(optionsOBJ=new options.template())
+function UpdateOptions(Options=new options())
 {
-    game.options=optionsOBJ
-    //options.set(game.options)
+    game.options=Options
+    Options.WriteOptions(Options)
 }
 module.exports =
 {

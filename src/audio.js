@@ -1,5 +1,5 @@
 const util = require("./utils")
-const options = require("./options")
+const game = require("./game")
 var idGiver = 0
 class EAudio
 {
@@ -47,7 +47,7 @@ class EAudio
      */
     play(ms=0)
     {
-        if(!options.get().mute)
+        if(!game.main.options.mute)
         {
             this._audio.currentTime=ms*1000
             const SRC = this.src
