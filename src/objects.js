@@ -36,10 +36,12 @@ class EObjectClass
          * Width
          */
         this.w = w
+        this._w = this.w
         /**
          * Height
          */
         this.h = h
+        this._h = this.h
         /**
          * X-Speed
          */
@@ -217,15 +219,16 @@ class EObject extends EObjectClass
         this._canvas.width = this.w
     }
     /**
-     * 
-     * @unused 
+     * Rotates the Image. May cause clipping **FIX THIS!**
+     * @param {number} deg - Degrees to rotate
      */
     rotate(deg=90)
     {
-        const calc = deg*Math.PI/180
-        this._ctx.translate(((this.x+this.w)/2),((this.y+this.h)/2))
+        const calc = deg*Math.PI/180.0
+        this._ctx.clearRect(0,0,this.w,this.h)
+        this._ctx.translate(this._canvas.width/2,this._canvas.height/2)
         this._ctx.rotate(calc)
-        this._ctx.translate(-((this.x+this.w)/2),-((this.y+this.h)/2))
+        this._ctx.translate(-1*(this._canvas.width/2),-1*(this._canvas.height/2))
         this.ang=deg
     }
     /*

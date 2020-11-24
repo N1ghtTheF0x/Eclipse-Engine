@@ -3,6 +3,7 @@ const render = require("./../render")
 const options = require("./../options")
 const eobjectM = require("./../objects")
 const game = require("./../game")
+const EOptions = require("./../options")
 
 function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
 {
@@ -34,7 +35,7 @@ function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
             const TexBuffer = Render.gl.createBuffer()
 
             Render.gl.bindBuffer(Render.gl.ARRAY_BUFFER,PosBuffer)
-            SetRectangle(eobject.x,eobject.y,eobject.w,eobject.h)
+            SetRectangle(eobject.x,eobject.y,eobject._w,eobject._h)
 
             Render.gl.bindBuffer(Render.gl.ARRAY_BUFFER,TexBuffer)
             Render.gl.bufferData(Render.gl.ARRAY_BUFFER,new Float32Array([
@@ -91,7 +92,7 @@ function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
         }
     }
 }
-function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),new eobjectM.temp()])
+function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),new eobjectM.temp(),new eobjectM.class(),new eobjectM.player(),new eobjectM.playertemp()])
 {
     if(objects instanceof Array)
     {
@@ -104,13 +105,14 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
                     if(object.color)
                     {
                         Render.ctx.fillStyle = object.color
-                        Render.ctx.fillRect(object.x,object.y,object.w,object.h)
+                        Render.ctx.fillRect(object.x,object.y,object._w,object._h)
                     }
                     if(object._image)
                     {
                         object._ctx.clearRect(0,0,object.w,object.h)
-                        object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.w,object.h)
-                        Render.ctx.drawImage(object._canvas,0,0,object.w,object.h,object.x*Render.factor,object.y*Render.factor,object.w*Render.factor,object.h*Render.factor)
+                        object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object._w,object._h)
+                        object._ctx.scale(object.z,object.z)
+                        Render.ctx.drawImage(object._canvas,0,0,object._w,object._h,object.x*Render.factor,object.y*Render.factor,object._w*Render.factor,object._h*Render.factor)
                     }
                 }
             }

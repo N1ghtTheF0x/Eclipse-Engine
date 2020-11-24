@@ -47,6 +47,9 @@ class EKeyboard
     constructor()
     {
         this.lastKey = ""
+        this.plusALT = false
+        this.plusCTRL = false
+        this.any = false
     }
 }
 
@@ -55,7 +58,7 @@ class EInput
     constructor(WINDOW=window)
     {
         this.window = WINDOW
-        this.lastInputDevice = "keyboard"
+        this.lastInputDevice = "Keyboard"
         this.gameController = this.window.navigator.getGamepads()[0]
         this.cursor = new EMouse()
         this.controllerPressed=new EController()
@@ -66,6 +69,7 @@ class EInput
         const newgamepad = this.window.navigator.getGamepads()[0]
         if(newgamepad)
         {
+            this.lastInputDevice="Gamepad"
             this.controllerPressed.A=newgamepad.buttons[0].pressed // A
             this.controllerPressed.B=newgamepad.buttons[1].pressed // B
             this.controllerPressed.X=newgamepad.buttons[2].pressed // X
@@ -108,8 +112,7 @@ class EInput
             controls.keyboardPressed.plusALT=event.altKey
             controls.keyboardPressed.plusCTRL=event.ctrlKey
             controls.keyboardPressed.lastKey=event.code
-            controls.lastInputDevice="keyboard"
-            util.Dprint("Player pressed on the Keyboard "+event.code)
+            this.lastInputDevice = "Keyboard"
             
         },false)
         this.window.document.addEventListener("keyup",function(event)

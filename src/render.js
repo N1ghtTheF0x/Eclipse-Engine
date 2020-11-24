@@ -3,9 +3,9 @@ const matrix = require("gl-matrix")
 const utils = require("./utils")
 const input = require("./input")
 
-function CreateCanvas(WINDOW=window)
+function CreateCanvas()
 {
-    const canvas = WINDOW.document.createElement("canvas")
+    const canvas = window.document.createElement("canvas")
     return canvas
 }
 
@@ -36,7 +36,7 @@ class ERender
         /**
          * The main canvas. Everything is rendered on this
          */
-        this.canvas = CreateCanvas(this.window)
+        this.canvas = CreateCanvas()
         this.canvas.height = this.window.screen.height
         this.canvas.width = this.window.screen.width
         /**
