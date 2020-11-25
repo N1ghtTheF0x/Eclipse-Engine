@@ -23,7 +23,7 @@ class EGame
             eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/unknown.png"),new eobjectM.temp()]
         }
         this.interval = 0
-        this.render = undefined||new render.render(window,{},{},{})
+        this.render = undefined
         this.options = {}
     }
 }

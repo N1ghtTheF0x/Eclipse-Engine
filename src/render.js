@@ -3,6 +3,10 @@ const matrix = require("gl-matrix")
 const utils = require("./utils")
 const input = require("./input")
 const escreen = require("./screen")
+const eobjects = require("./objects")
+const eaudio = require("./audio")
+const debug = require("./debug")
+const remote = require("electron").remote
 
 function CreateCanvas()
 {
@@ -40,7 +44,28 @@ class ERender
         this.canvas = CreateCanvas()
         this.canvas.height = this.window.screen.height
         this.canvas.width = this.window.screen.width
+        /**
+         * EScreen Access
+         */
         this.escreens = escreen
+        /**
+         * EObjects Access
+         */
+        this.eobjects = eobjects
+        /**
+         * EAudio Access
+         */
+        this.eaudio = eaudio
+        /**
+         * EDebug Access
+         */
+        this.debug = debug
+        /**
+         * Electron Dialog Access
+         */
+        this.dialog = remote.dialog
+        this.utils = utils
+        
         /**
          * The Draw factor. This is used to show objects in the same position when you set the resolution lower than your monitor's one
          */

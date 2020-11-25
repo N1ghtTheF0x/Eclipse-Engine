@@ -1,11 +1,18 @@
 const drpc = require("discord-rpc")
 const game = require("./game")
-const discord =
+
+class EDiscord
 {
-    id:game.main.options.discordrpc.id,
-    token:game.main.options.discordrpc.token,
-    discordRPC:new drpc.Client({transport:"ipc"})
+    constructor(id="",token="")
+    {
+        this.id = id
+        this.token = token
+        this.rpc = new drpc.Client({transport:"ipc"})
+        this.rpc.login({clientId:this.id,clientSecret:this.token})
+    }
 }
+
+const discord = new EDiscord()
 try
 {
     discord.discordRPC = new drpc.Client({transport:"ipc"})

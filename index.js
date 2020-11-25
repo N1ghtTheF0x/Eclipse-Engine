@@ -1,6 +1,6 @@
 const electron = require("electron")
 const ServerC = require("./src/network/server")
-
+const package = require("./package.json")
 function Window()
 {
     var server = false
@@ -41,4 +41,10 @@ electron.app.whenReady().then(Window)
 .catch(function(err)
 {
     console.error(err)
+})
+electron.app.getGPUInfo("complete")
+.then(function(obj)
+{
+    console.dir(obj)
+    console.dir(electron.app.getGPUFeatureStatus())
 })
