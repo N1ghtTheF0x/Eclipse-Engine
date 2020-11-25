@@ -2,6 +2,7 @@ const fs = require("fs")
 const matrix = require("gl-matrix")
 const utils = require("./utils")
 const input = require("./input")
+const escreen = require("./screen")
 
 function CreateCanvas()
 {
@@ -39,6 +40,7 @@ class ERender
         this.canvas = CreateCanvas()
         this.canvas.height = this.window.screen.height
         this.canvas.width = this.window.screen.width
+        this.escreens = escreen
         /**
          * The Draw factor. This is used to show objects in the same position when you set the resolution lower than your monitor's one
          */

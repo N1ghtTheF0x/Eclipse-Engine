@@ -111,7 +111,6 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
                     {
                         object._ctx.clearRect(0,0,object.w,object.h)
                         object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object._w,object._h)
-                        object._ctx.scale(object.z,object.z)
                         Render.ctx.drawImage(object._canvas,0,0,object._w,object._h,object.x*Render.factor,object.y*Render.factor,object._w*Render.factor,object._h*Render.factor)
                     }
                 }

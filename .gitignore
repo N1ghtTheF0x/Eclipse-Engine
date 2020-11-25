@@ -1,14 +1,13 @@
 # no need for node modules
 node_modules
-# no options file for you!
-options.json
 # no logs
 error.log
 out.log
 # no game related things
-textures
-src/game
-sound
-dist
+textures/*
+!textures/common
+src/game/*
+sound/*
+dist/*
 # no test files
 test.*

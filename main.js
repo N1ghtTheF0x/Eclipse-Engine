@@ -20,7 +20,7 @@ function Init(Render=new render.render)
     if(fs.existsSync("./src/game/init.js"))
     {
         util.print("info","Executing Game Init Script...")
-        require("./src/game/init")()
+        require("./src/game/init")(Render)
     }
     else
     {

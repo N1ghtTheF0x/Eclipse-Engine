@@ -4,6 +4,14 @@ const game = require("./game")
 const util = require("./utils")
 const render = require("./render")
 
+class EScreenManager extends Map
+{
+    constructor()
+    {
+        
+    }
+}
+
 class EScreen
 {
     constructor(id="dummy",name="Dummy Screen Name",audio=[new Maudio.audio()],objects=[new Mobjects.door(),new Mobjects.main(),new Mobjects.player(),new Mobjects.playertemp(),new Mobjects.temp(),new Mobjects.trigger()],setup=function(){},update=function(Render=new render.render()){})

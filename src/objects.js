@@ -446,8 +446,12 @@ function collision(obj1=new EObjectClass(),obj2=new EObjectClass())
     const hW=(obj1.w/2)+(obj2.w/2)
     const hH=(obj1.h/2)+(obj2.h/2)
 
-    const dir = {top:false,left:false,bottom:false,right:false}
+    const dir = {top:false,left:false,bottom:false,right:false,z:false}
 
+    if(obj1.z===obj2.z)
+    {
+        dir.z=true
+    }
     if(Math.abs(vX)<hW&&Math.abs(vY)<hH)
     {
         const oX = hW-Math.abs(vX)
