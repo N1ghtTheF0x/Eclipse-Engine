@@ -1,8 +1,14 @@
-precision mediump float;
+#version 300 es
 
-uniform sampler2D image;
-varying vec2 texpos;
+precision highp float;
+
+uniform sampler2D u_image;
+
+in vec2 v_texCoord;
+
+out vec4 outColor;
+
 void main()
 {
-    gl_FragColor = texture2D(image,texpos);
+    outColor = vec4(texture(u_image,v_texCoord).rgba);
 }

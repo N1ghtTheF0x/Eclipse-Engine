@@ -9,5 +9,6 @@ textures/*
 src/game/*
 sound/*
 dist/*
+options.json
 # no test files
 test.*

@@ -1,6 +1,8 @@
 const electron = require("electron")
 const ServerC = require("./src/network/server")
 const package = require("./package.json")
+const util = require("./src/utils")
+util.print("info","[ Eclipse Engine v"+package.version+" ] - "+package.name)
 function Window()
 {
     var server = false
@@ -24,27 +26,28 @@ function Window()
     win.setMenu(null)
     if(process.argv.includes("--edev"))
     {
+        util.print("info","Opening Developer Tools...")
         win.webContents.openDevTools()
     }
     if(process.argv.includes("--server"))
     {
+        util.print("info","Starting Server on Port 2411...")
         server = true
         const Server = new ServerC(2411)
         Server.listen()
     }
     if(!server)
     {
+        util.print("info","Starting Electron Window...")
         win.loadFile("index.html")
     }
 }
 electron.app.whenReady().then(Window)
 .catch(function(err)
 {
-    console.error(err)
+    util.print("error",err)
 })
-electron.app.getGPUInfo("complete")
-.then(function(obj)
+setTimeout(function()
 {
-    console.dir(obj)
-    console.dir(electron.app.getGPUFeatureStatus())
-})
+    util.print("warn","To view the actual log of the engine, use the developer console. You can only find errors from Electron, not the engine!")
+},1000*5)

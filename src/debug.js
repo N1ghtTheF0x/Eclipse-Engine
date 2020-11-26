@@ -34,6 +34,10 @@ function PlayerUpdate(player=new eobjects.player()||new eobjects.playertemp())
     {
         document.getElementById("py").innerText = player.y  
     } 
+    if(document.getElementById("protation"))
+    {
+        document.getElementById("protation").innerText = player.rotation
+    } 
 }
 module.exports =
 {

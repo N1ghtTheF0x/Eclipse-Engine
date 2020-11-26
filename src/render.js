@@ -8,12 +8,6 @@ const eaudio = require("./audio")
 const debug = require("./debug")
 const remote = require("electron").remote
 
-function CreateCanvas()
-{
-    const canvas = window.document.createElement("canvas")
-    return canvas
-}
-
 class ERender
 {
     /**
@@ -41,7 +35,7 @@ class ERender
         /**
          * The main canvas. Everything is rendered on this
          */
-        this.canvas = CreateCanvas()
+        this.canvas = this.window.document.createElement("canvas")
         this.canvas.height = this.window.screen.height
         this.canvas.width = this.window.screen.width
         /**
@@ -71,22 +65,14 @@ class ERender
          */
         this.factor = 1
         /**
-         * The Software Context. CPU driven.
-         */
-        this.ctx = this.canvas.getContext("2d")
-        if(this.ctx===null)
-        {
-            utils.print("warn","2D Render is not available!")
-        }
-        // Removes weird artefacting when using pictures with low resolution
-        this.ctx.imageSmoothingEnabled=false
-        /**
          * The Hardware Context. GPU driven.
          */
         this.gl = this.canvas.getContext("webgl2")
         if(this.gl===null)
         {
             utils.print("warn","WebGL Render is not available!")
+            remote.dialog.showErrorBox("Render Error!","Your PC does not support WebGL2!")
+            remote.process.exit(1)
         }
     }
     /**
@@ -122,22 +108,15 @@ class ERender
      * Clears the canvas
      * @param {boolean} hardware - Should we use Hardware for clearing the screen?
      */
-    Clear(hardware=false)
+    Clear()
     {
-        if(hardware)
+        if(this.gl&&this.gl!==null)
         {
-            if(this.gl!==null)
-            {
-                this.gl.clearColor(0,0,0,0)
-                this.gl.clearDepth(1.0)
-                this.gl.enable(this.gl.DEPTH_TEST)
-                this.gl.depthFunc(this.gl.LEQUAL)
-                this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT)
-            }
-        }
-        else
-        {
-            this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
+            this.gl.clearColor(0,0,0,0)
+            this.gl.clearDepth(1.0)
+            this.gl.enable(this.gl.DEPTH_TEST)
+            this.gl.depthFunc(this.gl.LEQUAL)
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT)
         }
     }
     /**
@@ -147,18 +126,25 @@ class ERender
     */
     GetShader(type=this.gl.VERTEX_SHADER,path="")
     {
-        if(this.gl!==null)
+        if(this.gl&&this.gl!==null)
         {
             const shader = this.gl.createShader(type)
-            this.gl.shaderSource(shader,fs.readFileSync(path,{encoding:"utf-8"}))
-            this.gl.compileShader(shader)
-            if(!this.gl.getShaderParameter(shader,this.gl.COMPILE_STATUS))
+            if(shader instanceof WebGLShader)
             {
-                utils.print("error","Shader compiling failed with "+path+":\n\n"+this.gl.getShaderInfoLog(shader))
-                this.gl.deleteShader(shader)
+                this.gl.shaderSource(shader,fs.readFileSync(path,{encoding:"utf-8"}))
+                this.gl.compileShader(shader)
+                if(!this.gl.getShaderParameter(shader,this.gl.COMPILE_STATUS))
+                {
+                    utils.print("error","Shader compiling failed with "+path+":\n\n"+this.gl.getShaderInfoLog(shader))
+                    this.gl.deleteShader(shader)
+                    return null
+                }
+                return shader
+            }
+            else
+            {
                 return null
             }
-            return shader
         }
         else
         {
@@ -172,40 +158,33 @@ class ERender
     */
     GetShaderProgram(vertexPath="",fragmentPath="")
     {
-        if(this.gl!==null)
+        if(this.gl&&this.gl!==null)
         {
             const Vs = this.GetShader(this.gl.VERTEX_SHADER,vertexPath)
             const Fs = this.GetShader(this.gl.FRAGMENT_SHADER,fragmentPath)
-            if(Vs===null||Fs===null)
+            if(Vs instanceof WebGLShader&&Fs instanceof WebGLShader)
+            {
+                const shaderprogram = this.gl.createProgram()
+                this.gl.attachShader(shaderprogram,Vs)
+                this.gl.attachShader(shaderprogram,Fs)
+                this.gl.linkProgram(shaderprogram)
+                if(!this.gl.getProgramParameter(shaderprogram,this.gl.LINK_STATUS))
+                {
+                    utils.print("error","Shader Program not initialized:\n\n"+this.gl.getProgramInfoLog(shaderprogram))
+                    this.gl.deleteProgram(shaderprogram)
+                    return null
+                }
+                return shaderprogram  
+            }
+            else
             {
                 return null
             }
-            const shaderprogram = this.gl.createProgram()
-            this.gl.attachShader(shaderprogram,Vs)
-            this.gl.attachShader(shaderprogram,Fs)
-            this.gl.linkProgram(shaderprogram)
-            if(!this.gl.getProgramParameter(shaderprogram,this.gl.LINK_STATUS))
-            {
-                utils.print("error","Shader Program not initialized:\n\n"+this.gl.getProgramInfoLog(shaderprogram))
-                this.gl.deleteProgram(shaderprogram)
-                return null
-            }
-            return shaderprogram
         }
         else
         {
             return null
         }
-    }
-    SetNewCanvas(WINDOW=window)
-    {
-        this.window = WINDOW
-        this.canvas = this.window.document.createElement("canvas")
-        this.canvas.height = this.window.screen.height
-        this.canvas.width = this.window.screen.width
-        this.ctx = this.canvas.getContext("2d")
-        this.gl = this.canvas.getContext("webgl2")
-        this.factor = 1
     }
 }
 function FramesPerSecondCalc(Render=new ERender(),time=0)

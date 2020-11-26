@@ -1,5 +1,4 @@
 const util = require("./utils")
-const render = require("./render")
 var idGiver = 0
 
 class EObjectClass
@@ -68,6 +67,14 @@ class EObjectClass
          */
         this.type = type
         /**
+         * Rotation [X, Y]
+         */
+        this.rotation = [0,1]
+        /**
+         * Translation [X, Y]
+         */
+        this.translation = [0,0]
+        /**
          * ID
          */
         this.id = idGiver
@@ -88,38 +95,6 @@ class EObjectClass
         this.jump = 6.5 // Default 6.5
         this.grv = 0.21875 // Default 0.21875
     }
-}
-class EObjectTEMP extends EObjectClass
-{
-    /**
-     * A Dirty Object Creator for temporal object placement
-     * @param {number} x - X Position | any value 
-     * @param {number} y - Y Position | any value
-     * @param {number} w - Width | any value
-     * @param {number} h - Height | any value
-     * @param {string} type - Type of object
-     * @param {string} color - The color of the object, You can use RGBA(0,0,0,0) to get an invisible object
-     * @software
-     */
-    constructor(x=0,y=0,w=0,h=0,type="dummy",color="blue")
-    {
-        super(x,y,w,h,type)
-        /**
-         * The color of the object
-         */
-        this.color = color
-    }
-    /*
-    draw()
-    {
-        render.ctx.fillStyle = this.color
-        render.ctx.fillRect(this.x*drawFaktor,this.y*drawFaktor,this.w*drawFaktor,this.h*drawFaktor)
-    }
-    drawHitbox()
-    {
-        render.ctx.fillStyle = util.RGBA(0,255,0,0.25)
-        render.ctx.fillRect(0,0,this.w*drawFaktor,this.h*drawFaktor)
-    }*/
 }
 class EObject extends EObjectClass
 {
@@ -173,11 +148,6 @@ class EObject extends EObjectClass
             this._image.src = "./textures/unknown.png"
             this.error=true
         }
-        this._canvas = document.createElement('canvas')
-        this._canvas.height = this.h
-        this._canvas.width = this.w
-        this._ctx = this._canvas.getContext("2d")
-        this._ctx.imageSmoothingEnabled=false
         /**
          * A array containing various animations. Keep in mind you have to add the animations yourself using the `AddAnimation` function
          */
@@ -215,82 +185,22 @@ class EObject extends EObjectClass
         this.sh=aniObj.sh
         this.w=aniObj.sw
         this.h=aniObj.sh
-        this._canvas.height = this.h
-        this._canvas.width = this.w
     }
     /**
-     * Rotates the Image. May cause clipping **FIX THIS!**
+     * Rotates the Image.
      * @param {number} deg - Degrees to rotate
      */
     rotate(deg=90)
     {
-        const calc = deg*Math.PI/180.0
-        this._ctx.clearRect(0,0,this.w,this.h)
-        this._ctx.translate(this._canvas.width/2,this._canvas.height/2)
-        this._ctx.rotate(calc)
-        this._ctx.translate(-1*(this._canvas.width/2),-1*(this._canvas.height/2))
-        this.ang=deg
+        const radian = deg*Math.PI/180
+        const SINUS = Math.sin(radian)
+        const COSINUS = Math.cos(radian)
+        this.rotation = [SINUS,COSINUS]
+        this.ang = deg
     }
-    /*
-    draw()
+    translate(x=0,y=0)
     {
-        this._ctx.clearRect(0,0,this.w,this.h)
-        this._ctx.drawImage(this._image,this.sx,this.sy,this.sw,this.sh,0,0,this.w,this.h)
-        render.ctx.drawImage(this._canvas,0,0,this.w,this.h,this.x*drawFaktor,this.y*drawFaktor,this.w*drawFaktor,this.h*drawFaktor)
-    }
-
-    drawHitbox()
-    {
-        this._ctx.fillStyle = util.RGBA(0,255,0,0.25)
-        this._ctx.fillRect(0,0,this.w*drawFaktor,this.h*drawFaktor)
-    }*/
-}
-class EObjectPlayerTEMP extends EObjectTEMP
-{
-    /**
-     * The Player temporal Object. This should only exist once!
-     * @param {number} x - X Position
-     * @param {number} y - Y Position
-     * @param {number} w - Width
-     * @param {number} h - Height
-     * @param {string} color - The Color
-     * @software
-     */
-    constructor(x=0,y=0,w=0,h=0,color="")
-    {
-        super(x,y,w,h,"player",color)
-        /**
-         * Is the player jumping at the moment?
-         */
-        this.jumping=false
-        /**
-         * Is the player on the ground? This value can even be false sometimes if he's on the ground
-         */
-        this.ground=false
-        /**
-         * Which direction the player is facing?
-         */
-        this.facing = "none"||"left"||"right"
-        /**
-         * Got the Player hit by something like an enemy or hazard?
-         */
-        this.hit = false
-        /**
-         * Can the player move around with keyboard or controller? Can be set to disable/enable player controls
-         */
-        this.canMove = true
-        /**
-         * For Multiplayer
-         */
-        this.name = ""
-        /**
-         * If `true` the player will ignore collision
-         */
-        this.ignoreCollision = false
-        /**
-         * Turns the player into a GOD!
-         */
-        this.godmode = false
+        this.translation = [x,y]
     }
 }
 class EObjectPlayer extends EObject
@@ -402,7 +312,6 @@ class ETileset
          * All the possible tiles this tilesheets has. You need to add them yourself with `setTile`
          */
         this.tiles = []
-        this._ctx = render.ctx
     }
     /**
      * Adds a new tile to the tilesheet
@@ -500,10 +409,8 @@ const globals = {
 module.exports =
 {
     class:EObjectClass,
-    temp:EObjectTEMP,
     main:EObject,
     player:EObjectPlayer,
-    playertemp:EObjectPlayerTEMP,
     door:EDoor,
     trigger:ETrigger,
     tileset:ETileset,

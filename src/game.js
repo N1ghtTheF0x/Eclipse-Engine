@@ -13,14 +13,14 @@ class EGame
             level:0,
             screen:"dummy",
             updateFunc:function(Render=new render.render()){},
-            eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/unknown.png"),new eobjectM.temp()]
+            eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/unknown.png")]
         }
         this.old =
         {
             level:0,
             screen:"dummy",
             updateFunc:function(Render=new render.render()){},
-            eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/unknown.png"),new eobjectM.temp()]
+            eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/unknown.png")]
         }
         this.interval = 0
         this.render = undefined
@@ -30,7 +30,7 @@ class EGame
 
 const game = new EGame()
 
-function UpdateGame(data={level:0,screen:"dummy",updateFunc:function(Render=new render.render()){},eobjects:[new eobjectM.main(0,0,0,0,"dummy",null),new eobjectM.temp()],options:new options()})
+function UpdateGame(data={level:0,screen:"dummy",updateFunc:function(Render=new render.render()){},eobjects:[new eobjectM.main(0,0,0,0,"dummy",null)],options:new options()})
 {
     game.old=game.current
     game.current.eobjects = data.eobjects
