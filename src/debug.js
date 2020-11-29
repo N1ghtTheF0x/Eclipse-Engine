@@ -2,13 +2,21 @@ const eobjects = require("./objects")
 
 function LastPressed()
 {
-    const LastKey = require("./game").main.render.input.keyboardPressed.lastKey
+    const input = require("./game").main.render.input
     if(document.getElementById("pressed"))
     {
-        document.getElementById("pressed").innerText = LastKey  
+        document.getElementById("pressed").innerText = input.keyboardPressed.lastKey
+    }
+    if(document.getElementById("cursorx"))
+    {
+        document.getElementById("cursorx").innerText = input.cursor.x
+    }
+    if(document.getElementById("cursory"))
+    {
+        document.getElementById("cursory").innerText = input.cursor.y
     }
 }
-function PlayerUpdate(player=new eobjects.player()||new eobjects.playertemp())
+function PlayerUpdate(player=new eobjects.player())
 {
     if(document.getElementById("pxsp"))
     {
@@ -37,7 +45,15 @@ function PlayerUpdate(player=new eobjects.player()||new eobjects.playertemp())
     if(document.getElementById("protation"))
     {
         document.getElementById("protation").innerText = player.rotation
-    } 
+    }
+    if(document.getElementById("isground"))
+    {
+        document.getElementById("isground").innerText = player.ground
+    }
+    if(document.getElementById("isjumping"))
+    {
+        document.getElementById("isjumping").innerText = player.jumping
+    }
 }
 module.exports =
 {

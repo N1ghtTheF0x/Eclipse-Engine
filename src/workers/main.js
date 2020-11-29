@@ -16,6 +16,7 @@ function main(Mtimestamp=0)
     }
     update(Render,game.main.current.updateFunc)
     draw(Render,game.main.current.eobjects)
+    Render.currentObjects = game.main.current.eobjects
     game.main.render.input.ControllerUpdate()
     game.intervalUpdate(Render.window.requestAnimationFrame(main))
 }

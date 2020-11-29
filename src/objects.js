@@ -1,6 +1,17 @@
 const util = require("./utils")
 var idGiver = 0
 
+class EHitbox
+{
+    constructor(x=0,y=0,w=0,h=0)
+    {
+        this.left = x
+        this.right = x+w
+        this.top = y
+        this.bottom = y+h
+    }
+}
+
 class EObjectClass
 {
     /**
@@ -94,6 +105,8 @@ class EObjectClass
         this.air = 0.09375 // Default 0.09375
         this.jump = 6.5 // Default 6.5
         this.grv = 0.21875 // Default 0.21875
+
+        this.hitbox = new EHitbox(this.x,this.y,this.w,this.h)
     }
 }
 class EObject extends EObjectClass
@@ -145,9 +158,14 @@ class EObject extends EObjectClass
         {
             util.print("warn","Couldn't set Image to "+spritesheet+"! Using default image.")
             util.print("error",err)
-            this._image.src = "./textures/unknown.png"
+            this._image.src = "./textures/common/unknown.png"
             this.error=true
         }
+        this._canvas = document.createElement("canvas")
+        this._canvas.height = this._h
+        this._canvas.width = this._w
+        this._ctx = this._canvas.getContext("2d")
+        this._ctx.imageSmoothingEnabled=false
         /**
          * A array containing various animations. Keep in mind you have to add the animations yourself using the `AddAnimation` function
          */
@@ -193,6 +211,10 @@ class EObject extends EObjectClass
     rotate(deg=90)
     {
         const radian = deg*Math.PI/180
+        this._ctx.clearRect(0,0,this._w,this._h)
+        this._ctx.translate(this._canvas.width/2,this._canvas.height/2)
+        this._ctx.rotate(radian)
+        this._ctx.translate(-1*(this._canvas.width/2),-1*(this._canvas.height/2))
         const SINUS = Math.sin(radian)
         const COSINUS = Math.cos(radian)
         this.rotation = [SINUS,COSINUS]
@@ -341,58 +363,21 @@ class ETileset
  * This is a collision test for two objects. It musn't be a `EObjectClass` but it needs X, Y, Width and Height as a property
  * @param {EObjectClass} obj1 - The one Object
  * @param {EObjectClass} obj2 - The other Object
+ * @returns {"left"|"right"|"top"|"bottom"}
  */
 function collision(obj1=new EObjectClass(),obj2=new EObjectClass())
 {
-    /*const right = (obj1.x+obj1.w)>=(obj2.x)
-    const left = (obj2.x+obj2.w)>=(obj1.x)
-    const bottom = (obj1.y+obj1.h)>=(obj2.y)
-    const top = (obj2.y+obj2.h)>=(obj1.y)
-    return {top:top,left:left,bottom:bottom,right:right}*/
-    const vX=(obj1.x+(obj1.w/2))-(obj2.x+(obj2.w/2))
-    const vY=(obj1.y+(obj1.h/2))-(obj2.y+(obj2.h/2))
-
-    const hW=(obj1.w/2)+(obj2.w/2)
-    const hH=(obj1.h/2)+(obj2.h/2)
-
-    const dir = {top:false,left:false,bottom:false,right:false,z:false}
-
-    if(obj1.z===obj2.z)
+    const hitbox1 = new EHitbox(obj1.x,obj1.y,obj1.w,obj1.h)
+    const hitbox2 = new EHitbox(obj2.x,obj2.y,obj2.w,obj2.h)
+    if(hitbox2.bottom<=hitbox1.top)
     {
-        dir.z=true
+        return "top"
     }
-    if(Math.abs(vX)<hW&&Math.abs(vY)<hH)
+    else if(hitbox2.top<=hitbox1.bottom)
     {
-        const oX = hW-Math.abs(vX)
-        const oY = hH-Math.abs(vY)
-        
-        if(oX>=oY)
-        {
-            if(vY>0)
-            {
-                dir.bottom=true
-                obj1.y+=oY
-            }
-            else
-            {
-                dir.top=true
-                obj1.y-=oY
-            }
-        }
-        else
-        {
-            if(vX>0)
-            {
-                dir.right=true
-                obj1.x+=oX
-            }
-            else
-            {
-                dir.left=true
-            }
-        }
+        return "bottom"
     }
-    return dir
+
 }
 const globals = {
     Gacc:0.046875,

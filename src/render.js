@@ -7,6 +7,7 @@ const eobjects = require("./objects")
 const eaudio = require("./audio")
 const debug = require("./debug")
 const remote = require("electron").remote
+const ewigets = require("./widget")
 
 class ERender
 {
@@ -33,11 +34,17 @@ class ERender
             old:0
         }
         /**
-         * The main canvas. Everything is rendered on this
+         * The Hardware canvas. Hardware rendering is found here
          */
-        this.canvas = this.window.document.createElement("canvas")
-        this.canvas.height = this.window.screen.height
-        this.canvas.width = this.window.screen.width
+        this.canvasGL = this.window.document.createElement("canvas")
+        /**
+         * The Software canvas. Software rendering is found here
+         */
+        this.canvasCTX = this.window.document.createElement("canvas")
+        this.canvasGL.height = this.window.screen.height
+        this.canvasGL.width = this.window.screen.width
+        this.canvasCTX.height = this.window.screen.height
+        this.canvasCTX.width = this.window.screen.width
         /**
          * EScreen Access
          */
@@ -51,6 +58,10 @@ class ERender
          */
         this.eaudio = eaudio
         /**
+         * EWidgets Access
+         */
+        this.ewigets = ewigets
+        /**
          * EDebug Access
          */
         this.debug = debug
@@ -58,21 +69,31 @@ class ERender
          * Electron Dialog Access
          */
         this.dialog = remote.dialog
+        /**
+         * Utilities Access
+         */
         this.utils = utils
-        
         /**
          * The Draw factor. This is used to show objects in the same position when you set the resolution lower than your monitor's one
          */
         this.factor = 1
+        this.currentObjects = [new this.eobjects.main()]
         /**
          * The Hardware Context. GPU driven.
          */
-        this.gl = this.canvas.getContext("webgl2")
+        this.gl = this.canvasGL.getContext("webgl2")
         if(this.gl===null)
         {
-            utils.print("warn","WebGL Render is not available!")
-            remote.dialog.showErrorBox("Render Error!","Your PC does not support WebGL2!")
-            remote.process.exit(1)
+            utils.print("warn","Hardware Render is not available!")
+        }
+        else
+        {
+
+        }
+        this.ctx = this.canvasCTX.getContext("2d")
+        if(this.ctx===null)
+        {
+            utils.print("warn","Software Render is not available!")
         }
     }
     /**
@@ -86,8 +107,10 @@ class ERender
         {
             if(height!==0)
             {
-                this.canvas.height = height
-                this.canvas.width = width
+                this.canvasGL.height = height
+                this.canvasGL.width = width
+                this.canvasCTX.height = height
+                this.canvasCTX.width = width
                 this.factor = width/this.window.screen.width
             }
             else
@@ -102,11 +125,10 @@ class ERender
     }
     GetResolution()
     {
-        return {width:this.canvas.width,height:this.canvas.height}
+        return {width:this.canvasGL.width,height:this.canvasGL.height}
     }
     /**
      * Clears the canvas
-     * @param {boolean} hardware - Should we use Hardware for clearing the screen?
      */
     Clear()
     {
@@ -117,6 +139,10 @@ class ERender
             this.gl.enable(this.gl.DEPTH_TEST)
             this.gl.depthFunc(this.gl.LEQUAL)
             this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT)
+        }
+        if(this.ctx&&this.ctx!==null)
+        {
+            this.ctx.clearRect(0,0,this.canvasCTX.width,this.canvasCTX.height)
         }
     }
     /**
@@ -184,6 +210,19 @@ class ERender
         else
         {
             return null
+        }
+    }
+    Init()
+    {
+        if(document.getElementById("Game"))
+        {
+            document.getElementById("Game").append(this.canvasGL)
+            document.getElementById("Game").append(this.canvasCTX)
+            return true
+        }
+        else
+        {
+            return false
         }
     }
 }

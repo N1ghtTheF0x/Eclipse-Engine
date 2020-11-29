@@ -1,7 +1,9 @@
 const eobjectM = require("./objects")
-const render = require("./render")
+const renderM = require("./render")
 const utils = require("./utils")
 const options = require("./options")
+
+const {render} = require("./render")
 
 class EGame
 {
@@ -12,14 +14,14 @@ class EGame
         {
             level:0,
             screen:"dummy",
-            updateFunc:function(Render=new render.render()){},
+            updateFunc:function(Render=new renderM.render()){},
             eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/unknown.png")]
         }
         this.old =
         {
             level:0,
             screen:"dummy",
-            updateFunc:function(Render=new render.render()){},
+            updateFunc:function(Render=new renderM.render()){},
             eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/unknown.png")]
         }
         this.interval = 0
@@ -30,7 +32,7 @@ class EGame
 
 const game = new EGame()
 
-function UpdateGame(data={level:0,screen:"dummy",updateFunc:function(Render=new render.render()){},eobjects:[new eobjectM.main(0,0,0,0,"dummy",null)],options:new options()})
+function UpdateGame(data={level:0,screen:"dummy",updateFunc:function(Render=new renderM.render()){},eobjects:[new eobjectM.main(0,0,0,0,"dummy",null)],options:new options()})
 {
     game.old=game.current
     game.current.eobjects = data.eobjects
@@ -40,7 +42,7 @@ function UpdateGame(data={level:0,screen:"dummy",updateFunc:function(Render=new 
     game.options = options
     utils.print("info","Updated Game Variables")
 }
-function UpdateRender(Render=new render.render())
+function UpdateRender(Render=new renderM.render())
 {
     game.render=Render
     utils.print("info","Updated Game Render")

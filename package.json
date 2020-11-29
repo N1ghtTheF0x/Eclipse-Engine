@@ -31,7 +31,7 @@
     "copyright":"Copyright © 2020 N1ghtTheF0x",
     "appId": "org.eclipseteam.ee",
     "win": {
-      "icon": "./textures/icon.ico",
+      "icon": "./textures/common/icon.ico",
       "target":[
         {
           "target":"msi",

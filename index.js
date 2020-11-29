@@ -20,7 +20,7 @@ function Window()
             },
             width:640,
             height:400,
-            icon:"./textures/icon.ico"
+            icon:"./textures/common/icon.ico"
         }
     )
     win.setMenu(null)

@@ -2,6 +2,7 @@ const util = require("./../utils")
 const render = require("./../render")
 const options = require("./../options")
 const eobjectM = require("./../objects")
+const ewidgets = require("./../widget")
 const game = require("./../game")
 const EOptions = require("./../options")
 
@@ -81,13 +82,13 @@ function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
 
             Render.SetResolution(screen.width,screen.height)
 
-            Render.gl.viewport(0,0,Render.canvas.width,Render.canvas.height)
+            Render.gl.viewport(0,0,Render.canvasGL.width,Render.canvasGL.height)
 
             Render.gl.useProgram(program)
 
             Render.gl.bindVertexArray(vao)
 
-            Render.gl.uniform2f(ResLoc,Render.canvas.width,Render.canvas.height)
+            Render.gl.uniform2f(ResLoc,Render.canvasGL.width,Render.canvasGL.height)
 
             Render.gl.uniform1i(ImageLoc,0)
 
@@ -113,7 +114,7 @@ function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
             {
                 if(object._image)
                 {
-                    if(object.x>(-20-object.w)||object.x<(Render.canvas.width+object.w))
+                    if(object.x>(-20-object.w)||object.x<(Render.canvasGL.width+object.w))
                     {
                         RenderEObject(object)
                     }
@@ -122,12 +123,45 @@ function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
         }
     }
 }
+function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),new ewidgets.button()])
+{
+    function RenderEObject(object=objects[0])
+    {
+        if(object)
+        {
+            if(object instanceof eobjectM.main)
+            {
+                object._ctx.clearRect(0,0,object.w,object.h)
+                object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object._w,object._h)
+                Render.ctx.drawImage(object._canvas,0,0,object._w,object._h,object.x*Render.factor,object.y*Render.factor,object._w*Render.factor,object._h*Render.factor)
+            }
+            if(object instanceof ewidgets.button)
+            {
+                Render.ctx.drawImage(object._image,0,0,object.w,object.h,object.x,object.y,object.w,object.h)
+            }
+        }
+    }
+    if(objects instanceof Array)
+    {
+        for(const object of objects)
+        {
+            if(object.x>(-20-object.w)||object.x<(Render.canvasCTX.width+object.w))
+            {
+                RenderEObject(object)
+            }
+        }
+    }
+}
 function Tick(Render=new render.render(),objects=[new eobjectM.main()])
 {
     Render.Clear()
-    if(Render.gl&&Render.gl!==null)
+    if(Render.gl&&Render.gl!==null&&game.main.options.hardware)
     {
         HardwareDraw(Render,objects)
+    }
+    else if(Render.ctx&&Render.ctx!==null&&!game.main.options.hardware)
+    {
+        SoftwareDraw(Render,objects)
     }
 }
 module.exports = Tick

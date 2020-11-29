@@ -47,11 +47,15 @@
             <p>PLAYER Y SPD: <span id="pysp"></span></p>
             <p>FACING: <span id="facing"></span></p>
             <p>ISHIT: <span id="ishit"></span></p>
+            <p>ISGROUND: <span id="isground"></span></p>
+            <p>ISJUMPING: <span id="isjumping"></span></p>
             <p>CAMERA X SPD: <span id="cxsp"></span></p>
             <p>CAMERA Y SPD: <span id="cysp"></span></p>
             <p>PLAYER X POS: <span id="px"></span></p>
             <p>PLAYER Y POS: <span id="py"></span></p>
             <p>PLAYER ROTATION: <span id="protation"></span></p>
+            <p>CURSOR X: <span id="cursorx"></span></p>
+            <p>CURSOR Y: <span id="cursory"></span></p>
         </debug>
 
     </body>
@@ -74,10 +78,7 @@
             util.print("info","Creating Render...")
             const Render = new render.render(window,canvas,ctx,webgl)
             util.print("info","Creating Window...")
-            if(document.getElementById("Game"))
-            {
-                document.getElementById("Game").append(Render.canvas)
-            }
+            Render.Init()
             game.renderUpdate(Render)
             util.print("info","Start Input")
             Render.input.Init(Render.input)
