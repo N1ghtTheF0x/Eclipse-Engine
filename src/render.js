@@ -233,9 +233,6 @@ function FramesPerSecondCalc(Render=new ERender(),time=0)
     const fps=Math.round(1/Render.FPS.passed)
     return fps
 }
-/**
- * Here you can find all important variables to Rendering
- */
 module.exports =
 {
     render:ERender,

@@ -90,10 +90,6 @@ class EObjectClass
          */
         this.id = idGiver
         idGiver++
-        /**
-         * @unused
-         */
-        this.wantsRotate=false
         this.acc = 0.046875 // Default 0.046875
         this.dec = 0.5 // Default 0.5
         this.frc = 0.046875 // Default 0.046875
@@ -105,8 +101,6 @@ class EObjectClass
         this.air = 0.09375 // Default 0.09375
         this.jump = 6.5 // Default 6.5
         this.grv = 0.21875 // Default 0.21875
-
-        this.hitbox = new EHitbox(this.x,this.y,this.w,this.h)
     }
 }
 class EObject extends EObjectClass
@@ -363,7 +357,7 @@ class ETileset
  * This is a collision test for two objects. It musn't be a `EObjectClass` but it needs X, Y, Width and Height as a property
  * @param {EObjectClass} obj1 - The one Object
  * @param {EObjectClass} obj2 - The other Object
- * @returns {"left"|"right"|"top"|"bottom"}
+ * @returns {"left"|"right"|"top"|"bottom"|"none"}
  */
 function collision(obj1=new EObjectClass(),obj2=new EObjectClass())
 {
@@ -376,6 +370,21 @@ function collision(obj1=new EObjectClass(),obj2=new EObjectClass())
     else if(hitbox2.top<=hitbox1.bottom)
     {
         return "bottom"
+    }
+    else
+    {
+        if(hitbox2.left<=hitbox1.right)
+        {
+            return "right"
+        }
+        else if(hitbox2.right<=hitbox1.left)
+        {
+            return "left"
+        }
+        else
+        {
+            return "none"
+        }
     }
 
 }

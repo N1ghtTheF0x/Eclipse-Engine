@@ -6,6 +6,15 @@ const render = require("./render")
 
 class EScreen
 {
+    /**
+     * A EScreen with his own `setup` for first execution and `update` for every frame
+     * @param {string} id - The name of the ID, for example: title, game, menu, multiplayer
+     * @param {string} name - The displayname of the ID, for example: "Title Screen", "Ingame", "Main Menu", "Multiplayer" 
+     * @param audio - A list of EAudio Objects
+     * @param objects - A list of EObjects
+     * @param setup - A function that only executes once
+     * @param update - A function that executes every frame. Contains `ERender` as first Parameter
+     */
     constructor(id="dummy",name="Dummy Screen Name",audio=[new Maudio.audio()],objects=[new Mobjects.door(),new Mobjects.main(),new Mobjects.player(),new Mobjects.trigger()],setup=function(){},update=function(Render=new render.render()){})
     {
         this.id = id
@@ -16,9 +25,16 @@ class EScreen
         this.update = update
     }
 }
-
+/**
+ * The EScreen Manager. All EScreens are found here.
+ */
 const EScreens = new Map([["dummy",new EScreen("dummy","Dummy Screen Name",[],[],function(){alert("This is a Dummy Screen.")},function(){})]])
-
+/**
+ * Switch to a another EScreen
+ * @param {string} id - The ID of the EScreen to switch
+ * @param {number} level - The Level of the game
+ * @param {boolean} withSetup - Should it execute the setup function?
+ */
 function SwitchToEScreen(id="dummy",level=0,withSetup=true)
 {
     if(EScreens.has(id))
@@ -42,7 +58,15 @@ function SwitchToEScreen(id="dummy",level=0,withSetup=true)
         util.print("warn","Screen "+id+" does not exist!")
     }
 }
-
+/**
+ * Adds a EScreen to the EScreen Manager
+ * @param {string} id - The name of the ID, for example: title, game, menu, multiplayer
+ * @param {string} name - The displayname of the ID, for example: "Title Screen", "Ingame", "Main Menu", "Multiplayer" 
+ * @param audio - A list of EAudio Objects
+ * @param objects - A list of EObjects
+ * @param setup - A function that only executes once
+ * @param update - A function that executes every frame. Contains `ERender` as first Parameter
+ */
 function AddScreen(id="dummy",name="Dummy Screen Name",audio=[new Maudio.audio()],objects=[new Mobjects.door(),new Mobjects.main(),new Mobjects.player(),new Mobjects.playertemp(),new Mobjects.temp(),new Mobjects.trigger()],setup=function(){},update=function(Render=new render.render){})
 {
     const ESCREEN = new EScreen(id,name,audio,objects,setup,update)
@@ -53,10 +77,28 @@ function AddScreen(id="dummy",name="Dummy Screen Name",audio=[new Maudio.audio()
     }
     else
     {
-        util.print("warn","Screen "+id+" already exists!")
+        util.print("warn","Screen ID "+id+" already exists!")
     }
 }
-
+/**
+ * Removes a EScreen from the EScreen Manager
+ * @param {string} id - The ID of the EScreen to remove
+ */
+function RemoveScreen(id="dummy")
+{
+    if(EScreens.has(id))
+    {
+        EScreens.delete(id)
+    }
+    else
+    {
+        util.print("info","The Screen ID "+id+" already does not exist!")
+    }
+}
+/**
+ * Check if the EScreen already exists
+ * @param {string} id - The ID of the EScreen to check 
+ */
 function HasScreen(id="dummy")
 {
     if(EScreens.has(id))
@@ -75,5 +117,6 @@ module.exports =
     EScreens:EScreens,
     SwitchToEScreen:SwitchToEScreen,
     add:AddScreen,
-    has:HasScreen
+    has:HasScreen,
+    remove:RemoveScreen
 }

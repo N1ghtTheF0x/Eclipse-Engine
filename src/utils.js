@@ -14,7 +14,7 @@ function sleep(ms=1000)
 }
 /**
  * A better and pretty print function. It shows when the print function got executed with an type like WARN, DEBUG, INFO, ERROR
- * @param {string} type - The type of the log message. It autocaps the text
+ * @param {"info"|"error"|"log"|"debug"|"warn"} type - The type of the log message. It autocaps the text
  * @param {string} message - What's the message to print to the console?
  */
 function print(type="WARN",message="Default print text!")

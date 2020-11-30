@@ -1,29 +1,49 @@
-const serverC = require("socket.io")
 const utils = require("./../utils")
+const net = require("net")
 
 class EServer
 {
     constructor(port=2411)
     {
-        this.server = new serverC.Server({path:"/",serveClient:true})
         this.port = port
-        this.address4 = "0.0.0.0"
-        this.address6 = "::"
+        this.server = net.createServer()
+        var server = this.server
+        this.address = this.server.address
+        this.handlerstoadd
         this.handlers = []
-        this.server.on("connect",function(socket=new serverC.Socket())
+        var handlers = this.handlers
+        var self = this
+        this.server.on("close",function()
         {
-            utils.print("info","A User has connected: "+socket.id)
+            utils.print("info","The Server has closed")
         })
-        utils.print("info","Created Server on Port "+this.port)
+        this.server.on("connection",function(socket)
+        {
+            utils.print("info","Client "+socket.localAddress+":"+socket.localPort+" connected to the server!")
+            for(const handler of handlers)
+            {
+                if(typeof handler==="function")
+                {
+                    handler(socket)
+                }
+            }
+        })
+        this.server.on("error",function(err)
+        {
+            utils.print("error","An error has occured:\n\n"+err)
+        })
+        this.server.on("listening",function()
+        {
+            utils.print("info","Started listening on "+self.port)
+        })
     }
     listen()
     {
         this.server.listen(this.port)
-        utils.print("info","Started listening")
     }
-    broadcast()
+    Update()
     {
-        this.server.emit()
+        
     }
 }
 module.exports = EServer
