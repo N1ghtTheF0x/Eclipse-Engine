@@ -66,7 +66,7 @@ function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
             Render.gl.vertexAttribPointer(TexAttribute,2,Render.gl.FLOAT,false,0,0)
 
             const texture = Render.gl.createTexture()
-            Render.gl.activeTexture(texture)
+            Render.gl.activeTexture(Render.gl.TEXTURE0)
             Render.gl.bindTexture(Render.gl.TEXTURE_2D,texture)
 
             Render.gl.texParameteri(Render.gl.TEXTURE_2D,Render.gl.TEXTURE_WRAP_S,Render.gl.CLAMP_TO_EDGE)
@@ -127,7 +127,7 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
 {
     function RenderEObject(object=objects[0])
     {
-        if(object)
+        if((object)&&(object._canvas.width!==0&&object._canvas.height!==0))
         {
             if(object instanceof eobjectM.main)
             {

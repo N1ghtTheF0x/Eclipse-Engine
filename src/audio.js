@@ -177,9 +177,23 @@ class EAudioBoost
     }
 }
 
+function StopAllAudio()
+{
+    const escreens = require("./screen")
+
+    for(const [key,escreen] of escreens.EScreens)
+    {
+        for(const audio of escreen.audio)
+        {
+            audio.stop()
+        }
+    }
+}
+
 module.exports =
 {
     audio:EAudio,
     stepUp:EAudioStepUp,
-    boost:EAudioBoost
+    boost:EAudioBoost,
+    stopAll:StopAllAudio
 }

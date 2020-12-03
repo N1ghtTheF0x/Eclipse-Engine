@@ -2,7 +2,7 @@ var idGiver = 0
 
 class EWidgetBase
 {
-    constructor(x=0,y=0,w=0,h=0,type="dummy",sprite="")
+    constructor(x=0,y=0,w=0,h=0,type="dummy",sprite="",index=0)
     {
         this.sprite = sprite
         this.error = false
@@ -24,14 +24,15 @@ class EWidgetBase
         this.h = h
         this.type = type
         this.id = idGiver
+        this.index = index
         idGiver++
     }
 }
 class EWidgetButton extends EWidgetBase
 {
-    constructor(x=0,y=0,w=0,h=0,sprite="",onhover=function(){},onclick=function(){})
+    constructor(x=0,y=0,w=0,h=0,sprite="",index=0,onhover=function(){},onclick=function(){})
     {
-        super(x,y,w,h,"button",sprite)
+        super(x,y,w,h,"button",sprite,index)
         this.onhover = onclick
         this.onclick = onclick
     }

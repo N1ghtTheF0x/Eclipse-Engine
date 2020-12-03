@@ -116,7 +116,7 @@ class EObject extends EObjectClass
      * @software
      * @hardware
      */
-    constructor(x=0,y=0,w=0,h=0,type="dummy",spritesheet="none",)
+    constructor(x=0,y=0,w=0,h=0,type="dummy",spritesheet="./textures/common/unknown.png",)
     {
         super(x,y,w,h,type)
         /**
@@ -217,6 +217,19 @@ class EObject extends EObjectClass
     translate(x=0,y=0)
     {
         this.translation = [x,y]
+    }
+}
+class EObjectNet extends EObjectClass
+{
+    constructor(x=0,y=0,w=0,h=0,type="",spritesheet="")
+    {
+        super(x,y,w,h,type)
+        this.spritesheet = spritesheet
+    }
+    normalize()
+    {
+        const eobject = new EObject(this.x,this.y,this.w,this.h,this.type,this.spritesheet)
+        return eobject
     }
 }
 class EObjectPlayer extends EObject
@@ -409,5 +422,9 @@ module.exports =
     trigger:ETrigger,
     tileset:ETileset,
     collision:collision,
-    globals:globals
+    globals:globals,
+    net:
+    {
+        main:EObjectNet
+    }
 }
