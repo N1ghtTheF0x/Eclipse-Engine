@@ -14,3 +14,4 @@ dist/*
 options.json
 # no test files
 test.*
+yarn.lock
