@@ -3,7 +3,6 @@ const renderM = require("./render")
 const utils = require("./utils")
 const options = require("./options")
 const discord = require("./discord")
-const {render} = require("./render")
 
 class EGame
 {
@@ -25,10 +24,11 @@ class EGame
             eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/common/unknown.png")]
         }
         this.interval = 0
-        this.render = undefined
+        this.render = undefined//new renderM.render(window)
         this.options = {}
         this.discordrpc = new discord("","")
         this.buttonIndex = 0
+        this.DEBUG = false
     }
 }
 

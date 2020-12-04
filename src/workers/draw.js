@@ -127,9 +127,9 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
 {
     function RenderEObject(object=objects[0])
     {
-        if((object)&&(object._canvas.width!==0&&object._canvas.height!==0))
+        if((object)&&(object._image))
         {
-            if(object instanceof eobjectM.main)
+            if((object instanceof eobjectM.main)&&(object._canvas.width!==0&&object._canvas.height!==0))
             {
                 object._ctx.clearRect(0,0,object.w,object.h)
                 object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object._w,object._h)
@@ -137,7 +137,7 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
             }
             if(object instanceof ewidgets.button)
             {
-                Render.ctx.drawImage(object._image,0,0,object.w,object.h,object.x,object.y,object.w,object.h)
+                Render.ctx.drawImage(object._image,0,0,object._w,object._h,object.x*Render.factor,object.y*Render.factor,object._w*Render.factor,object._h*Render.factor)
             }
         }
     }

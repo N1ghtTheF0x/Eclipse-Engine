@@ -13,6 +13,7 @@ class EMouse
         this.middle = false
         this.forward = false
         this.backward = false
+        this.ButtonIndex = 0
     }
 }
 
@@ -132,6 +133,7 @@ class EInput
         this.window.document.addEventListener("onmousedown",function(event)
         {
             event.preventDefault()
+            controls.cursor.ButtonIndex=event.button
             if(event.button)
             {
                 if(event.button===0) // Left Click
@@ -155,7 +157,6 @@ class EInput
                     controls.cursor.backward=true
                 }
             }
-            
         },false)
         this.window.document.addEventListener("onmouseup",function(event)
         {

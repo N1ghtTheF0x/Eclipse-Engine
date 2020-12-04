@@ -1,31 +1,11 @@
-var idGiver = 0
+const eobjects = require("./objects")
 
-class EWidgetBase
+class EWidgetBase extends eobjects.main
 {
     constructor(x=0,y=0,w=0,h=0,type="dummy",sprite="",index=0)
     {
-        this.sprite = sprite
-        this.error = false
-        this._image = new Image()
-        try
-        {
-            this._image.src = this.sprite
-        }
-        catch(err)
-        {
-            util.print("warn","Couldn't set Image to "+sprite+"! Using default image.")
-            util.print("error",err)
-            this._image.src = "./textures/common/unknown.png"
-            this.error=true
-        }
-        this.x = x
-        this.y = y
-        this.w = w
-        this.h = h
-        this.type = type
-        this.id = idGiver
+        super(x,y,w,h,type,sprite)
         this.index = index
-        idGiver++
     }
 }
 class EWidgetButton extends EWidgetBase

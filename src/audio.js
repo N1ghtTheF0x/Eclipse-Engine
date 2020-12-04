@@ -159,23 +159,46 @@ class EAudioBoost
     {
         this.main._audio.volume=1
         this.fx._audio.volume=0
+        this.boosting = false
     }
     play(ms=0)
     {
         this.main.play(ms)
         this.fx.play(ms)
+        this.boosting = false
     }
     pause()
     {
         this.main.pause()
         this.fx.pause()
+        this.boosting = false
     }
     stop()
     {
         this.main.stop()
         this.fx.stop()
+        this.boosting = false
     }
 }
+class EAudioAllegro
+{
+    constructor(orginal=new EAudio(),allegroVersion=new EAudio())
+    {
+        this.orginal = orginal
+        this.allegroVersion = allegroVersion
+        this.IsOrginal = true
+    }
+    playAllegro()
+    {
+        if(this.IsOrginal)
+        {
+            this.orginal.stop()
+            this.allegroVersion.play()
+            this.IsOrginal = false
+        }
+    }
+}
+
 
 function StopAllAudio()
 {
@@ -195,5 +218,6 @@ module.exports =
     audio:EAudio,
     stepUp:EAudioStepUp,
     boost:EAudioBoost,
-    stopAll:StopAllAudio
+    stopAll:StopAllAudio,
+    allegro:EAudioAllegro
 }

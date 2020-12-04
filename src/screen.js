@@ -15,7 +15,7 @@ class EScreen
      * @param setup - A function that only executes once
      * @param update - A function that executes every frame. Contains `ERender` as first Parameter
      */
-    constructor(id="dummy",name="Dummy Screen Name",audio=[new Maudio.audio()],objects=[new Mobjects.door(),new Mobjects.main(),new Mobjects.player(),new Mobjects.trigger()],setup=function(){},update=function(Render=new render.render()){})
+    constructor(id="dummy",name="Dummy Screen Name",audio=[new Maudio.audio(),new Maudio.allegro(),new Maudio.boost(),new Maudio.stepUp()],objects=[new Mobjects.door(),new Mobjects.main(),new Mobjects.player(),new Mobjects.trigger()],setup=function(){},update=function(Render=new render.render()){})
     {
         this.id = id
         this.name = name

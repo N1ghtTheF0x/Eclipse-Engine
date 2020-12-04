@@ -15,6 +15,10 @@ function LastPressed()
     {
         document.getElementById("cursory").innerText = input.cursor.y
     }
+    if(document.getElementById("cpressed"))
+    {
+        document.getElementById("cpressed").innerText = input.cursor.ButtonIndex
+    }
 }
 function PlayerUpdate(player=new eobjects.player())
 {

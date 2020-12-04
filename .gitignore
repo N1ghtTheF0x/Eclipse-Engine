@@ -8,6 +8,8 @@ textures/*
 !textures/common
 src/game/*
 sound/*
+!sound/sfx
+sound/sfx/*
 dist/*
 options.json
 # no test files

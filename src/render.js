@@ -37,10 +37,12 @@ class ERender
          * The Hardware canvas. Hardware rendering is found here
          */
         this.canvasGL = this.window.document.createElement("canvas")
+        this.canvasGL.id = "Hardware"
         /**
          * The Software canvas. Software rendering is found here
          */
         this.canvasCTX = this.window.document.createElement("canvas")
+        this.canvasCTX.id = "Software"
         this.canvasGL.height = this.window.screen.height
         this.canvasGL.width = this.window.screen.width
         this.canvasCTX.height = this.window.screen.height
