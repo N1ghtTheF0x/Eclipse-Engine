@@ -1,12 +1,17 @@
 const fs = require("fs")
-const matrix = require("gl-matrix")
-const utils = require("./utils")
-const input = require("./input")
-const escreen = require("./screen")
-const eobjects = require("./objects")
+const remote = require("electron").remote
+
 const eaudio = require("./audio")
 const debug = require("./debug")
-const remote = require("electron").remote
+const discord = require("./discord")
+const error = require("./error")
+//const game = require("./game")
+const input = require("./input")
+const io = require("./io")
+const eobjects = require("./objects")
+const options = require("./options")
+const escreen = require("./screen")
+const utils = require("./utils")
 const ewigets = require("./widget")
 
 class ERender
@@ -47,6 +52,22 @@ class ERender
         this.canvasGL.width = this.window.screen.width
         this.canvasCTX.height = this.window.screen.height
         this.canvasCTX.width = this.window.screen.width
+        /**
+         * EOptions Access
+         */
+        this.options = options
+        /**
+         * E I/O Access
+         */
+        this.io = io
+        /**
+         * EError Access
+         */
+        this.error = error
+        /**
+         * EDiscord Access
+         */
+        this.discord = discord
         /**
          * EScreen Access
          */
@@ -124,6 +145,10 @@ class ERender
         {
             utils.print("warn","Width cannot be 0!")
         }
+    }
+    GetGameState()
+    {
+        return require("./game")
     }
     GetResolution()
     {

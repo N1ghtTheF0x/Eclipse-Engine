@@ -4,3 +4,7 @@ function CheckIfFileExist(path="")
 {
     return fs.existsSync(path)
 }
+module.exports =
+{
+    checkFile:CheckIfFileExist
+}

@@ -5,7 +5,7 @@ class EAudio
 {
     /**
      * An easy to use Audio Class
-     * @param {string} src - Path to audio file (MP3/OGG) 
+     * @param {string} src - Path to audio file (`MP3`|`OGG`|`FLAC`|`WAV`) 
      * @param {boolean} loop - Should the audio loop when finished?
      */
     constructor(src="",loop=false)

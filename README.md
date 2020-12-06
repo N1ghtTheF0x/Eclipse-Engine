@@ -7,7 +7,6 @@ These are all the libraries I'm using:
 |--|--|
 |`electron`|https://www.electronjs.org/|
 |`discord.js / discord-rpc`|https://discord.js.org/|
-|`gl-matrix`|http://glmatrix.net/|
 |`electron-builder`|https://www.electron.build/|
 ## Features
 

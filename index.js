@@ -1,53 +1,29 @@
-const electron = require("electron")
-const ServerC = require("./src/network/server")
-const package = require("./package.json")
 const util = require("./src/utils")
-util.print("info","[ Eclipse Engine v"+package.version+" ] - "+package.name)
-function Window()
+const render = require("./src/render")
+const mainWorker = require("./src/workers/main").main
+const escreen = require("./src/screen")
+const game = require("./src/game")
+const fs = require("fs")
+const electron = require("electron").remote
+const path = require("path")
+util.print("info","Starting game...")
+util.print("info","Creating Render...")
+const Render = new render.render(window)
+util.print("info","Creating Window...")
+Render.Init()
+game.renderUpdate(Render)
+util.print("info","Start Input")
+Render.input.Init(Render.input)
+const PATH = path.resolve("./src/game/init")
+if(fs.existsSync(PATH))
 {
-    var server = false
-    const win = new electron.BrowserWindow(
-        {
-            title:"Eclipse Engine - Blank Project",
-            webPreferences:
-            {
-                nodeIntegration:true,
-                nodeIntegrationInSubFrames:true,
-                nodeIntegrationInWorker:true,
-                enableRemoteModule:true,
-                worldSafeExecuteJavaScript:true,
-                webgl:true
-            },
-            width:640,
-            height:400,
-            icon:"./textures/common/icon.ico"
-        }
-    )
-    win.setMenu(null)
-    if(process.argv.includes("--edev"))
-    {
-        util.print("info","Opening Developer Tools...")
-        win.webContents.openDevTools()
-    }
-    if(process.argv.includes("--server"))
-    {
-        util.print("info","Starting Server on Port 2411...")
-        server = true
-        const Server = new ServerC(2411)
-        Server.listen()
-    }
-    if(!server)
-    {
-        util.print("info","Starting Electron Window...")
-        win.loadFile("index.html")
-    }
+    util.print("info","Executing Game Init Script...")
+    require(PATH)(Render)
 }
-electron.app.whenReady().then(Window)
-.catch(function(err)
+else
 {
-    util.print("error",err)
-})
-setTimeout(function()
-{
-    util.print("warn","To view the actual log of the engine, use the developer console. You can only find errors from Electron, not the engine!")
-},1000*5)
+    util.print("warn","Init Script not found!\nPath provided is: "+PATH)
+    electron.dialog.showMessageBoxSync(null,{title:"No Init Script!",message:"There's no Init Script in the Game folder!",detail:"Contact the Developer!",type:"warning",buttons:["Ok"]})
+    escreen.SwitchToEScreen("dummy",0)
+}
+mainWorker(Render)

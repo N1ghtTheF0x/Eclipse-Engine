@@ -11,8 +11,7 @@
   "private": true,
   "dependencies": {
     "discord-rpc": "^3.1.4",
-    "discord.js": "^12.3.1",
-    "gl-matrix": "^3.3.0"
+    "discord.js": "^12.3.1"
   },
   "devDependencies": {
     "electron": "^11.0.2",
@@ -32,20 +31,14 @@
       "icon": "./textures/common/icon.ico",
       "target":[
         {
-          "target":"msi",
+          "target":"dir",
           "arch":[
             "x64",
             "ia32"
           ]
         }
       ]
-    },
-    "extraFiles":
-    [
-      "./src/game",
-      "./sound",
-      "./textures"
-    ]
+    }
   },
   "repository": {
     "url": "https://github.com/N1ghtTheF0x/Eclipse-Engine",
