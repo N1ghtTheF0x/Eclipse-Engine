@@ -1,7 +1,6 @@
 const fs = require("fs")
-const game = require("./game")
 
-class EOptions
+module.exports = class EOptions
 {
     constructor()
     {
@@ -76,4 +75,3 @@ class EOptions
         }
     }
 }
-module.exports = EOptions

@@ -1,20 +1,9 @@
 const fs = require("fs")
-const remote = require("electron").remote
 
-const eaudio = require("./audio")
-const debug = require("./debug")
-const discord = require("./discord")
-const error = require("./error")
-//const game = require("./game")
 const input = require("./input")
-const io = require("./io")
-const eobjects = require("./objects")
-const options = require("./options")
-const escreen = require("./screen")
 const utils = require("./utils")
-const ewigets = require("./widget")
 
-class ERender
+module.exports = class ERender
 {
     /**
      * This is the main Render. Here are all things related to your screen and drawn objects. The Input is also present here for Keyboard/Mouse/Gamepad detection
@@ -53,54 +42,10 @@ class ERender
         this.canvasCTX.height = this.window.screen.height
         this.canvasCTX.width = this.window.screen.width
         /**
-         * EOptions Access
-         */
-        this.options = options
-        /**
-         * E I/O Access
-         */
-        this.io = io
-        /**
-         * EError Access
-         */
-        this.error = error
-        /**
-         * EDiscord Access
-         */
-        this.discord = discord
-        /**
-         * EScreen Access
-         */
-        this.escreens = escreen
-        /**
-         * EObjects Access
-         */
-        this.eobjects = eobjects
-        /**
-         * EAudio Access
-         */
-        this.eaudio = eaudio
-        /**
-         * EWidgets Access
-         */
-        this.ewigets = ewigets
-        /**
-         * EDebug Access
-         */
-        this.debug = debug
-        /**
-         * Electron Dialog Access
-         */
-        this.dialog = remote.dialog
-        /**
-         * Utilities Access
-         */
-        this.utils = utils
-        /**
          * The Draw factor. This is used to show objects in the same position when you set the resolution lower than your monitor's one
          */
         this.factor = 1
-        this.currentObjects = [new this.eobjects.main()]
+        this.currentObjects = []
         /**
          * The Hardware Context. GPU driven.
          */
@@ -146,13 +91,12 @@ class ERender
             utils.print("warn","Width cannot be 0!")
         }
     }
-    GetGameState()
-    {
-        return require("./game")
-    }
+    /**
+     * Returns the Resolution of the Render
+     */
     GetResolution()
     {
-        return {width:this.canvasGL.width,height:this.canvasGL.height}
+        return {width:this.canvasGL.width||this.canvasCTX.width,height:this.canvasGL.height||this.canvasCTX.height}
     }
     /**
      * Clears the canvas
@@ -239,6 +183,9 @@ class ERender
             return null
         }
     }
+    /**
+     * Initialize the Render
+     */
     Init()
     {
         if(document.getElementById("Game"))
@@ -252,16 +199,16 @@ class ERender
             return false
         }
     }
+    /**
+     * Calculate the frames per second
+     * @param {number} delta - The delta time
+     */
+    FramesPerSecondCalc(delta=0)
+    {
+        this.FPS.passed=(delta-this.FPS.old)/1000
+        this.FPS.old=delta
+        const fps=Math.round(1/this.FPS.passed)
+        return fps
+    }
 }
-function FramesPerSecondCalc(Render=new ERender(),time=0)
-{
-    Render.FPS.passed=(time-Render.FPS.old)/1000
-    Render.FPS.old=time
-    const fps=Math.round(1/Render.FPS.passed)
-    return fps
-}
-module.exports =
-{
-    render:ERender,
-    FPSC:FramesPerSecondCalc
-}
+

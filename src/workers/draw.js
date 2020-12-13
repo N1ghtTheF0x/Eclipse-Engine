@@ -1,12 +1,9 @@
-const util = require("./../utils")
-const render = require("./../render")
-const options = require("./../options")
+const ERender = require("./../render")
 const eobjectM = require("./../objects")
 const ewidgets = require("./../widget")
-const game = require("./../game")
-const EOptions = require("./../options")
+const EGame = require("./../game")
 
-function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
+function HardwareDraw(Render=new ERender(),objects=[new eobjectM.main()])
 {
     function RenderEObject(eobject=new eobjectM.main())
     {
@@ -123,7 +120,7 @@ function HardwareDraw(Render=new render.render(),objects=[new eobjectM.main()])
         }
     }
 }
-function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),new ewidgets.button()])
+function SoftwareDraw(Render=new ERender(),objects=[new eobjectM.main(),new ewidgets.button()])
 {
     function RenderEObject(object=objects[0])
     {
@@ -131,9 +128,11 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
         {
             if((object instanceof eobjectM.main)&&(object._canvas.width!==0&&object._canvas.height!==0))
             {
-                object._ctx.clearRect(0,0,object.w,object.h)
-                object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object._w,object._h)
-                Render.ctx.drawImage(object._canvas,0,0,object._w,object._h,object.x*Render.factor,object.y*Render.factor,object._w*Render.factor,object._h*Render.factor)
+                //object._ctx.clearRect(0,0,object.dw,object.dh)
+                //object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.w,object.h)
+                object._ctx.clearRect(0,0,object.dw,object.dh)
+                object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.w/2,object.h/2)
+                Render.ctx.drawImage(object._canvas,0,0,object.dw,object.dh,object.x*Render.factor,object.y*Render.factor,object.w*Render.factor,object.h*Render.factor)
             }
             if(object instanceof ewidgets.button)
             {
@@ -152,15 +151,16 @@ function SoftwareDraw(Render=new render.render(),objects=[new eobjectM.main(),ne
         }
     }
 }
-function Tick(Render=new render.render(),objects=[new eobjectM.main()])
+function Tick(Game=new EGame(),objects=[new eobjectM.main()])
 {
-    Render.Clear()
-    if(Render.gl&&Render.gl!==null&&game.main.options.hardware)
+    Game.render.Clear()
+    if(Game.render.gl&&Game.render.gl!==null&&Game.hardware)
     {
         HardwareDraw(Render,objects)
     }
-    else if(Render.ctx&&Render.ctx!==null&&!game.main.options.hardware)
+    else if(Game.render.ctx&&Game.render.ctx!==null&&!Game.hardware)
     {
+        Game.render.SetResolution(window.innerWidth,window.innerHeight)
         SoftwareDraw(Render,objects)
     }
 }

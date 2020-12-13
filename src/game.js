@@ -1,74 +1,157 @@
-const eobjectM = require("./objects")
-const renderM = require("./render")
 const utils = require("./utils")
-const options = require("./options")
+const Escreen = require("./screen")
+const remote = require("electron").remote
+const eaudio = require("./audio")
+const debug = require("./debug")
 const discord = require("./discord")
+const error = require("./error")
+const io = require("./io")
+const eobjects = require("./objects")
+const EOptions = require("./options")
+const escreen = require("./screen")
+const ewigets = require("./widget")
+const ERender = require("./render")
 
 class EGame
 {
-    constructor()
+    constructor(Render=new ERender(),Options=new EOptions())
     {
+        /**
+         * Frames per Second of this Instance
+         */
         this.fps = 0
-        this.current =
-        {
-            level:0,
-            screen:"dummy",
-            updateFunc:function(Render=new renderM.render()){},
-            eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/common/unknown.png")]
-        }
-        this.old =
-        {
-            level:0,
-            screen:"dummy",
-            updateFunc:function(Render=new renderM.render()){},
-            eobjects:[new eobjectM.main(0,0,0,0,"dummy","./textures/common/unknown.png")]
-        }
+        /**
+         * Currently viewing EScreen
+         */
+        this.current = new Escreen.EScreen()
+        /**
+         * Previous EScreen
+         */
+        this.old = new Escreen.EScreen()
+        /**
+         * `requestAnimationFrame` Interval
+         */
         this.interval = 0
-        this.render = undefined//new renderM.render(window)
-        this.options = {}
+        /**
+         * The Render Instance of this Instance
+         */
+        this.render = Render
+        /**
+         * Game Options
+         */
+        this.options = Options
+        /**
+         * Enable WebGL Render?
+         */
+        this.hardware = false
+        /**
+         * Discord Client of this Instance
+         */
         this.discordrpc = new discord("","")
+        /**
+         * All EScreens of this Instance. **THEY ARE IN THE PROPERTY `map`!!!!**
+         */
+        this.screenmanager = new Escreen.EScreenManager()
+        /**
+         * Currently selected button
+         */
         this.buttonIndex = 0
+        /**
+         * Is this game packaged?
+         */
+        this.packaged = __dirname.includes("app.asar")
+        /**
+         * DEBUG enabler
+         */
         this.DEBUG = false
+        /**
+         * E I/O Access
+         */
+        this.io = io
+        /**
+         * EError Access
+         */
+        this.error = error
+        /**
+         * EDiscord Access
+         */
+        this.discord = discord
+        /**
+         * EScreen Access
+         */
+        this.escreens = escreen
+        /**
+         * EObjects Access
+         */
+        this.eobjects = eobjects
+        /**
+         * EAudio Access
+         */
+        this.eaudio = eaudio
+        /**
+         * EWidgets Access
+         */
+        this.ewigets = ewigets
+        /**
+         * EDebug Access
+         */
+        this.debug = debug
+        /**
+         * Electron Access
+         */
+        this.electron = remote
+        /**
+         * Utilities Access
+         */
+        this.utils = utils
+    }
+    UpdateEScreen(newEScreen=new Escreen.EScreen())
+    {
+        this.old=this.current
+        this.current = newEScreen
+        utils.print("info","Updated Game Variables")
+    }
+    UpdateRender(Render=new ERender())
+    {
+        this.render=Render
+        utils.print("info","Updated Game Render")
+    }
+    UpdateInterval(interval=0)
+    {
+        this.interval=interval
+    }
+    UpdateOptions(Options=new EOptions())
+    {
+        this.options=Options
+        Options.WriteOptions(Options)
+    }
+    UpdateDiscord(Discord=new discord("",""))
+    {
+        this.discordrpc=Discord
+    }
+    /**
+     * Switch to a another EScreen
+     * @param {string} id - The ID of the EScreen to switch
+     * @param {number} level - The Level of the game
+     * @param {boolean} withSetup - Should it execute the setup function?
+     */
+    SwitchToEScreen(id="dummy",level=0,withSetup=true)
+    {
+        if(this.screenmanager.HasScreen(id))
+        {
+            const Screen = this.screenmanager.map.get(id)
+            this.UpdateEScreen(Screen)
+            util.print("info","Switched from Screen "+this.old.id+" to "+id)
+            if(withSetup)
+            {
+                util.print("info","Executing setup function...")
+                Screen.setup()
+            }
+        }
+        else
+        {
+            util.print("warn","Screen "+id+" does not exist!")
+        }
     }
 }
-
-const game = new EGame()
-
-function UpdateGame(data={level:0,screen:"dummy",updateFunc:function(Render=new renderM.render()){},eobjects:[new eobjectM.main(0,0,0,0,"dummy",null)],options:new options()})
-{
-    game.old=game.current
-    game.current.eobjects = data.eobjects
-    game.current.level = data.level
-    game.current.screen = data.screen
-    game.current.updateFunc = data.updateFunc
-    game.options = options
-    utils.print("info","Updated Game Variables")
-}
-function UpdateRender(Render=new renderM.render())
-{
-    game.render=Render
-    utils.print("info","Updated Game Render")
-}
-function UpdateInterval(interval=0)
-{
-    game.interval=interval
-}
-function UpdateOptions(Options=new options())
-{
-    game.options=Options
-    Options.WriteOptions(Options)
-}
-function UpdateDiscord(Discord=new discord("",""))
-{
-    game.discordrpc=Discord
-}
-module.exports =
-{
-    main:game,
-    update:UpdateGame,
-    intervalUpdate:UpdateInterval,
-    renderUpdate:UpdateRender,
-    class:EGame,
-    OptionsUpdate:UpdateOptions,
-    discordUpate:UpdateDiscord
-}
+module.exports = EGame

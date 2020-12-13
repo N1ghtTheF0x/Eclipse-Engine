@@ -1,29 +1,84 @@
+const electron = require("electron")
+const EServer = require("./src/network/server")
+const package = require("./package.json")
 const util = require("./src/utils")
-const render = require("./src/render")
-const mainWorker = require("./src/workers/main").main
-const escreen = require("./src/screen")
-const game = require("./src/game")
-const fs = require("fs")
-const electron = require("electron").remote
-const path = require("path")
-util.print("info","Starting game...")
-util.print("info","Creating Render...")
-const Render = new render.render(window)
-util.print("info","Creating Window...")
-Render.Init()
-game.renderUpdate(Render)
-util.print("info","Start Input")
-Render.input.Init(Render.input)
-const PATH = path.resolve("./src/game/init")
-if(fs.existsSync(PATH))
+const path = require("path") 
+
+function CreateServer(Port=0)
 {
-    util.print("info","Executing Game Init Script...")
-    require(PATH)(Render)
+    util.print("info","Starting Server on Port "+Port)
+    const Server = new EServer(Port)
+    Server.listen()
 }
-else
+
+util.print("info","[ Eclipse Engine - v"+package.version+" ]")
+function Window()
 {
-    util.print("warn","Init Script not found!\nPath provided is: "+PATH)
-    electron.dialog.showMessageBoxSync(null,{title:"No Init Script!",message:"There's no Init Script in the Game folder!",detail:"Contact the Developer!",type:"warning",buttons:["Ok"]})
-    escreen.SwitchToEScreen("dummy",0)
+    const args = process.argv
+    const win = new electron.BrowserWindow(
+        {
+            title:"Eclipse Engine - Blank Project",
+            webPreferences:
+            {
+                nodeIntegration:true,
+                enableRemoteModule:true,
+                contextIsolation:false,
+                webgl:true,
+                worldSafeExecuteJavaScript:true
+            },
+            width:1280,
+            height:720,
+            icon:"./textures/common/icon.ico"
+        }
+    )
+    win.setMenu(null)
+    if(args.includes("--server"))
+    {
+        const INDEX = args.indexOf("--server")
+        const PORT = parseInt(args[INDEX+1])
+        if(typeof PORT==="number")
+        {
+            CreateServer(PORT)
+        }
+        else
+        {
+            CreateServer(2411)
+        }
+    }
+    else if(args.includes("-s"))
+    {
+        const INDEX = args.indexOf("-s")
+        const PORT = parseInt(args[INDEX+1])
+        if(typeof PORT==="number")
+        {
+            CreateServer(PORT)
+        }
+        else
+        {
+            CreateServer(2411)
+        }
+    }
+    else
+    {
+        util.print("info","Starting Electron Window...")
+        win.loadFile("index.html")
+        .then(function()
+        {
+            if(args.includes("--edev")||args.includes("-d"))
+            {
+                util.print("warn","Developer Tools on! Don't report bugs/glitches if this is on!")
+                win.webContents.openDevTools({mode:"detach",activate:false})
+            }
+        })
+    }
+    
 }
-mainWorker(Render)
+electron.app.whenReady().then(Window)
+.catch(function(error)
+{
+    util.print("error",error)
+})
+.finally(function()
+{
+    util.print("warn","Only log of Electron visible here. To view the log of the game, start the game with developer tools")
+})

@@ -1,24 +1,40 @@
+const EGame = require("./game")
 const eobjects = require("./objects")
 
-function LastPressed()
+function LastPressed(Game=new EGame())
 {
-    const input = require("./game").main.render.input
-    if(document.getElementById("pressed"))
+    if(Game.DEBUG)
     {
-        document.getElementById("pressed").innerText = input.keyboardPressed.lastKey
+        if(document.getElementById("debugtag"))
+        {
+            document.getElementById("debugtag").style.display="inherit"
+            const input = Game.render.input
+            if(document.getElementById("pressed"))
+            {
+                document.getElementById("pressed").innerText = input.keyboardPressed.lastKey
+            }
+            if(document.getElementById("cursorx"))
+            {
+                document.getElementById("cursorx").innerText = input.cursor.x
+            }
+            if(document.getElementById("cursory"))
+            {
+                document.getElementById("cursory").innerText = input.cursor.y
+            }
+            if(document.getElementById("cpressed"))
+            {
+                document.getElementById("cpressed").innerText = input.cursor.ButtonIndex
+            }
+        }
     }
-    if(document.getElementById("cursorx"))
+    else
     {
-        document.getElementById("cursorx").innerText = input.cursor.x
+        if(document.getElementById("debugtag"))
+        {
+            document.getElementById("debugtag").style.display="none"
+        }
     }
-    if(document.getElementById("cursory"))
-    {
-        document.getElementById("cursory").innerText = input.cursor.y
-    }
-    if(document.getElementById("cpressed"))
-    {
-        document.getElementById("cpressed").innerText = input.cursor.ButtonIndex
-    }
+    
 }
 function PlayerUpdate(player=new eobjects.player())
 {

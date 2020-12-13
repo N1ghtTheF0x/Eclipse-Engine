@@ -1,6 +1,5 @@
 const drpc = require("discord-rpc")
 const djs = require("discord.js")
-const game = require("./game")
 
 class EDiscord
 {

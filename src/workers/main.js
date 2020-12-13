@@ -1,30 +1,32 @@
-const options = require("./../options.js")
-const render = require("./../render")
 const util = require("./../utils")
 
-const update = require("./update")
 const draw = require("./draw")
+const EGame = require("./../game")
 
-function main(Mtimestamp=0)
+function main(Mtimestamp=0,GAME=new EGame())
 {
-    const game = require("./../game")
-    const Render = game.main.render
+    const Game = GAME
+    const Render = Game.render
     if(document.getElementById("dfps"))
     {
-        const FPS = render.FPSC(Render,Mtimestamp)
+        const FPS = Render.FramesPerSecondCalc(Mtimestamp)
         document.getElementById("dfps").innerText = FPS
     }
-    update(Render,game.main.current.updateFunc)
-    draw(Render,game.main.current.eobjects)
-    Render.currentObjects = game.main.current.eobjects
-    game.main.render.input.ControllerUpdate()
-    game.intervalUpdate(Render.window.requestAnimationFrame(main))
+    Game.current.update(Game)
+    draw(Game,Game.current.objects)
+    Game.render.currentObjects = Game.current.objects
+    Game.render.input.ControllerUpdate()
+    Game.UpdateInterval(Render.window.requestAnimationFrame(function(time)
+    {
+        main(time,Game)
+    }))
 }
-function MAIN(Render=new render.render())
+function MAIN(Game=new EGame())
 {
-    const game = require("./../game")
-    game.renderUpdate(Render)
-    game.intervalUpdate(game.main.render.window.requestAnimationFrame(main))
+    Game.UpdateInterval(Game.render.window.requestAnimationFrame(function(time)
+    {
+        main(time,Game)
+    }))
     util.print("info","Started Main Worker")
 }
 module.exports =

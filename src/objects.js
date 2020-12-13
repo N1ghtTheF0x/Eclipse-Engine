@@ -102,6 +102,10 @@ class EObjectClass
         this.jump = 6.5 // Default 6.5
         this.grv = 0.21875 // Default 0.21875
     }
+    GetHitbox()
+    {
+        return new EHitbox(this.x,this.y,this.w,this.h)
+    }
 }
 class EObject extends EObjectClass
 {
@@ -123,22 +127,7 @@ class EObject extends EObjectClass
          * The Path to the spritesheet
          */
         this.spritesheet = spritesheet
-        /**
-         * Source X of Picture
-         */
-        this.sx = 0
-        /**
-         * Source Y of Picture
-         */
-        this.sy = 0
-        /**
-         * Source Width of Picture
-         */
-        this.sw = this.w
-        /**
-         * Source Height of Picture
-         */
-        this.sh = this.h
+        
         /**
          * Has the EObject caught an Error?
          */
@@ -155,9 +144,27 @@ class EObject extends EObjectClass
             this._image.src = "./textures/common/unknown.png"
             this.error=true
         }
+        this.dw = this.w*2
+        this.dh = this.h*2
+        /**
+         * Source X of Picture
+         */
+        this.sx = 0
+        /**
+         * Source Y of Picture
+         */
+        this.sy = 0
+        /**
+         * Source Width of Picture
+         */
+        this.sw = this.dw
+        /**
+         * Source Height of Picture
+         */
+        this.sh = this.dh
         this._canvas = document.createElement("canvas")
-        this._canvas.height = this._h
-        this._canvas.width = this._w
+        this._canvas.height = this.dh
+        this._canvas.width = this.dw
         this._ctx = this._canvas.getContext("2d")
         this._ctx.imageSmoothingEnabled=false
         /**
@@ -172,6 +179,7 @@ class EObject extends EObjectClass
          * The current index of the animation array
          */
         this.curAnimation = 0
+        
     }
     /**
      * Add a animation to the EObject

@@ -185,6 +185,8 @@ class EInput
                 }
             }
         },false)
+        util.print("info","Started Input")
     }
+
 }
 module.exports = EInput
