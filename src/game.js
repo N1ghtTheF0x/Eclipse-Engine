@@ -14,7 +14,7 @@ const ERender = require("./render")
 
 class EGame
 {
-    constructor(Render=new ERender(),Options=new EOptions())
+    constructor(Render=new ERender(),Options={})
     {
         /**
          * Frames per Second of this Instance
@@ -120,10 +120,9 @@ class EGame
     {
         this.interval=interval
     }
-    UpdateOptions(Options=new EOptions())
+    UpdateOptions()
     {
-        this.options=Options
-        Options.WriteOptions(Options)
+        this.options=EOptions.GetOptionFile()
     }
     UpdateDiscord(Discord=new discord("",""))
     {

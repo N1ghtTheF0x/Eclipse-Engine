@@ -382,8 +382,8 @@ class ETileset
  */
 function collision(obj1=new EObjectClass(),obj2=new EObjectClass())
 {
-    const hitbox1 = new EHitbox(obj1.x,obj1.y,obj1.w,obj1.h)
-    const hitbox2 = new EHitbox(obj2.x,obj2.y,obj2.w,obj2.h)
+    const hitbox1 = obj1.GetHitbox()
+    const hitbox2 = obj2.GetHitbox()
     if(hitbox2.bottom<=hitbox1.top)
     {
         return "top"

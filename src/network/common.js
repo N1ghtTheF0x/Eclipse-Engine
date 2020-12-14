@@ -1,3 +1,5 @@
+const crypto = require("crypto")
+
 class EIncomingMessage
 {
     /**
@@ -14,5 +16,19 @@ class EIncomingMessage
     }
 }
 module.exports = {
-    incomingMessage:EIncomingMessage
+    incomingMessage:EIncomingMessage,
+    encrypt(string="")
+    {
+        const cipher = crypto.createCipheriv("aes-256-gcm","EclipseEngine",crypto.randomBytes(16))
+        var crypted = cipher.update(string,"hex","utf8")
+        crypted+=cipher.final("utf8")
+        return crypted
+    },
+    decrypt(encryptedstring="")
+    {
+        const decipher = crypto.createDecipheriv("aes-256-gcm","EclipseEngine",crypto.randomBytes(16))
+        var dec = decipher.update(encryptedstring,"hex","utf8")
+        dec+=decipher.final("utf8")
+        return dec
+    }
 }

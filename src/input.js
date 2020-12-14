@@ -2,6 +2,9 @@ const util = require("./utils")
 
 class EMouse
 {
+    /**
+     * The User's Mouse. Here's the position of the mouse based on the window and if clicked a button
+     */
     constructor()
     {
         this.x = 0
@@ -19,6 +22,9 @@ class EMouse
 
 class EController
 {
+    /**
+     * The User's Controller
+     */
     constructor()
     {
         this.joyX1=0
@@ -47,6 +53,9 @@ class EController
 
 class EKeyboard
 {
+    /**
+     * The User's Keyboard. To get an key use the property as `event.code`
+     */
     constructor()
     {
         this.lastKey = ""
@@ -62,47 +71,50 @@ class EInput
     {
         this.window = WINDOW
         this.lastInputDevice = "Keyboard"
-        this.gameController = this.window.navigator.getGamepads()[0]
+        this.HasGameController = typeof this.window.navigator.getGamepads()[0]!=="undefined"
         this.cursor = new EMouse()
-        this.controllerPressed=new EController()
+        this.controllersPressed=[new EController()]
         this.keyboardPressed=new EKeyboard()
     }
     ControllerUpdate()
     {
-        const newgamepad = this.window.navigator.getGamepads()[0]
-        if(newgamepad)
+        this.HasGameController = typeof this.window.navigator.getGamepads()[0]!=="undefined"
+        if(this.HasGameController)
         {
             this.lastInputDevice="Gamepad"
-            this.controllerPressed.A=newgamepad.buttons[0].pressed // A
-            this.controllerPressed.B=newgamepad.buttons[1].pressed // B
-            this.controllerPressed.X=newgamepad.buttons[2].pressed // X
-            this.controllerPressed.Y=newgamepad.buttons[3].pressed // Y
-
-            this.controllerPressed.ls=newgamepad.buttons[4].pressed // Left shoulder
-            this.controllerPressed.rs=newgamepad.buttons[5].pressed // right shoulder
-
-            this.controllerPressed.lt=newgamepad.buttons[6].value // left trigger
-            this.controllerPressed.rt=newgamepad.buttons[7].value // right trigger
-            
-            this.controllerPressed.select=newgamepad.buttons[8].pressed // select/back
-            this.controllerPressed.start=newgamepad.buttons[9].pressed // start/forward
-
-            this.controllerPressed.joy1=newgamepad.buttons[10].pressed // Left Joystick Press
-            this.controllerPressed.joy2=newgamepad.buttons[11].pressed // Right Joystick Press
-
-            this.controllerPressed.dup=newgamepad.buttons[12].pressed // Dpad Up
-            this.controllerPressed.ddown=newgamepad.buttons[13].pressed // Dpad Down
-            this.controllerPressed.dleft=newgamepad.buttons[14].pressed // Dpad Left
-            this.controllerPressed.dright=newgamepad.buttons[15].pressed // Dpad Right
-
-            this.controllerPressed.power=newgamepad.buttons[16].pressed // Xbox Button/PS Button/Power Button
-
-
-            this.controllerPressed.joyX1=newgamepad.axes[0] // Left Joystick X-Position
-            this.controllerPressed.joyY1=newgamepad.axes[1] // Left Joystick Y-Position
-
-            this.controllerPressed.joyX2=newgamepad.axes[2] // Right Joystick X-Position
-            this.controllerPressed.joyY2=newgamepad.axes[3] // Right Joystick Y-Position
+            for(const controller of this.controllersPressed)
+            {
+                controller.A=newgamepad.buttons[0].pressed // A
+                controller.B=newgamepad.buttons[1].pressed // B
+                controller.X=newgamepad.buttons[2].pressed // X
+                controller.Y=newgamepad.buttons[3].pressed // Y
+    
+                controller.ls=newgamepad.buttons[4].pressed // Left shoulder
+                controller.rs=newgamepad.buttons[5].pressed // right shoulder
+    
+                controller.lt=newgamepad.buttons[6].value // left trigger
+                controller.rt=newgamepad.buttons[7].value // right trigger
+                
+                controller.select=newgamepad.buttons[8].pressed // select/back
+                controller.start=newgamepad.buttons[9].pressed // start/forward
+    
+                controller.joy1=newgamepad.buttons[10].pressed // Left Joystick Press
+                controller.joy2=newgamepad.buttons[11].pressed // Right Joystick Press
+    
+                controller.dup=newgamepad.buttons[12].pressed // Dpad Up
+                controller.ddown=newgamepad.buttons[13].pressed // Dpad Down
+                controller.dleft=newgamepad.buttons[14].pressed // Dpad Left
+                controller.dright=newgamepad.buttons[15].pressed // Dpad Right
+    
+                controller.power=newgamepad.buttons[16].pressed // Xbox Button/PS Button/Power Button
+    
+    
+                controller.joyX1=newgamepad.axes[0] // Left Joystick X-Position
+                controller.joyY1=newgamepad.axes[1] // Left Joystick Y-Position
+    
+                controller.joyX2=newgamepad.axes[2] // Right Joystick X-Position
+                controller.joyY2=newgamepad.axes[3] // Right Joystick Y-Position
+            }
         }
     }
     Init(controls=new EInput())

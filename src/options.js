@@ -1,77 +1,57 @@
 const fs = require("fs")
+const electron = require("electron").remote
+const path = require("path")
+const utils = require("./utils")
 
-module.exports = class EOptions
+const OPTIONS_PATH_FILE = path.resolve(electron.process.resourcesPath,"options.json")
+
+module.exports = 
 {
-    constructor()
+    HasOptionFile()
     {
-        this.mute = false
-        this.discordrpc =
-        {
-            id:"",
-            tokem:""
-        }
-        this.hardware = false
-    }
-    APPDATA()
-    {
-        return (process.env.APPDATA) ? process.env.APPDATA : false
-    }
-    ET_FOLDER()
-    {
-        return (this.APPDATA()!==false&&APPDATA+"\\EclipseTeam") ? this.APPDATA()+"\\EclipseTeam" : false
-    }
-    OPTIONS_FILE()
-    {
-        return (this.ET_FOLDER()!==false&&this.ET_FOLDER()+"\\options.json") ? this.ET_FOLDER()+"\\options.json" : false
-    }
-    HasOptions(write=false)
-    {
-        if(this.OPTIONS_FILE())
+        if(fs.existsSync(OPTIONS_PATH_FILE))
         {
             return true
         }
         else
         {
-            if(write)
-            {
-                if(!this.APPDATA())
-                {
-                    if(!this.ET_FOLDER())
-                    {
-                        fs.mkdirSync(this.APPDATA()+"\\EclipseTeam",{recursive:true})
-                    }
-                    fs.writeFileSync(this.APPDATA()+"\\EclipseTeam\\options.json",{},{encoding:"utf-8"})
-                }
-            }
             return false
         }
-    }
-    /**
-     * @returns {EOptions}
-     */
-    GetOptions()
+    },
+    GetOptionFile()
     {
-        if(this.OPTIONS_FILE())
+        if(this.HasOptionFile())
         {
-            const optionsFile = JSON.parse(fs.readFileSync(this.OPTIONS_FILE()))
-            if(optionsFile!=={})
+            if(fs.accessSync(OPTIONS_PATH_FILE,fs.constants.F_OK))
             {
-                return optionsFile
+                return fs.readFileSync(OPTIONS_PATH_FILE,{encoding:"utf-8"})
             }
             else
             {
+                utils.print("warn","Could not read Option File - Read Access Denied!")
                 return null
             }
         }
-    }
-    WriteOptions(options=new EOptions())
-    {
-        this.discordrpc=options.discordrpc
-        this.hardware=options.hardware
-        this.mute=options.mute
-        if(this.HasOptions(false))
+        else
         {
-            fs.writeFileSync(this.OPTIONS_FILE(),JSON.stringify(this),{encoding:"utf-8"})
+            utils.print("warn","Could not get Option File - File does not exist!")
         }
+    },
+    CreateOptionFile()
+    {
+        if(!this.HasOptionFile())
+        {
+            fs.writeFileSync(OPTIONS_PATH_FILE,JSON.stringify({}),{encoding:"utf-8"})
+        }
+        else
+        {
+            utils.print("warn","Could not create Option File - File already exists!")
+        }
+    },
+    UpdateOptionFile(newOption={})
+    {
+        const oldOption = JSON.parse(this.GetOptionFile())
+        const constructedOption = {...oldOption,newOption}
+        fs.writeFileSync(OPTIONS_PATH_FILE,JSON.stringify(constructedOption),{encoding:"utf-8"})
     }
 }

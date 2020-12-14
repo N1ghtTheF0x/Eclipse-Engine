@@ -4,7 +4,7 @@
   "description": "A Game Engine using Electron, Javascript and the HTML5 Canvas feature",
   "main": "index.js",
   "author": {
-    "name":"N1ghtTheF0x",
+    "name": "N1ghtTheF0x",
     "email": "kil.night.prower@gmail.com"
   },
   "license": "MIT",
@@ -14,25 +14,25 @@
     "discord.js": "^12.5.1"
   },
   "devDependencies": {
-    "electron": "^11.0.5",
+    "electron": "^11.1.0",
     "electron-builder": "^22.9.1"
   },
   "scripts": {
     "start": "npx electron .",
     "debug": "npx electron . --edev",
     "server": "npx electron . --server",
-    "build":"npx electron-builder"
+    "build": "npx electron-builder"
   },
   "build": {
     "productName": "Eclipse Engine",
-    "copyright":"Copyright © 2020 N1ghtTheF0x",
+    "copyright": "Copyright © 2020 N1ghtTheF0x",
     "appId": "org.eclipseteam.ee",
     "win": {
       "icon": "./textures/common/icon.ico",
-      "target":[
+      "target": [
         {
-          "target":"dir",
-          "arch":[
+          "target": "dir",
+          "arch": [
             "x64",
             "ia32"
           ]
@@ -45,12 +45,26 @@
     "type": "git"
   },
   "homepage": "https://github.com/N1ghtTheF0x/Eclipse-Engine#readme",
-  "keywords": ["game engine","html5","webgl","canvas","electron"],
+  "keywords": [
+    "game engine",
+    "html5",
+    "webgl",
+    "canvas",
+    "electron"
+  ],
   "bugs": {
     "email": "kilo.night.prower@gmail.com",
     "url": "https://github.com/N1ghtTheF0x/Eclipse-Engin/issues"
   },
-  "browser":true,
-  "os": ["win32","!darwin","!linux"],
-  "cpu": ["x64","ia32","!arm"]
+  "browser": true,
+  "os": [
+    "win32",
+    "!darwin",
+    "!linux"
+  ],
+  "cpu": [
+    "x64",
+    "ia32",
+    "!arm"
+  ]
 }
