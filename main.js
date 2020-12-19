@@ -4,13 +4,15 @@ const mainWorker = require("./src/workers/main").main
 const EGame = require("./src/game")
 const EOptions = require("./src/options")
 const path = require("path")
-
 const fs = require("fs")
 const electron = require("electron").remote
+
+EOptions.CreateOptionFile()
 util.print("info","Creating Render...")
 const Render = new ERender(window)
 util.print("info","Creating game...")
-const Game = new EGame(Render,new EOptions())
+const OPTIONS = (EOptions.HasOptionFile()) ? EOptions.GetOptionFile() : {}
+const Game = new EGame(Render,OPTIONS)
 util.print("info","Creating Window...")
 Game.render.Init()
 Game.DEBUG=true

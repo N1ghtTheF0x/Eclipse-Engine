@@ -24,17 +24,18 @@ module.exports =
         {
             if(fs.accessSync(OPTIONS_PATH_FILE,fs.constants.F_OK))
             {
-                return fs.readFileSync(OPTIONS_PATH_FILE,{encoding:"utf-8"})
+                return JSON.parse(fs.readFileSync(OPTIONS_PATH_FILE,{encoding:"utf-8"}))
             }
             else
             {
                 utils.print("warn","Could not read Option File - Read Access Denied!")
-                return null
+                return {}
             }
         }
         else
         {
             utils.print("warn","Could not get Option File - File does not exist!")
+            return {}
         }
     },
     CreateOptionFile()

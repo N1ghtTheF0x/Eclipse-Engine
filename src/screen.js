@@ -23,6 +23,25 @@ class EScreen
         this.setup = setup
         this.update = update
     }
+    /**
+     * Resets all EObjects
+     */
+    resetObjects()
+    {
+        for(const object of this.objects)
+        {
+            object.x=object._x
+            object.y=object._y
+            object.z=object._z
+            object.ang=0
+            object.w=object._w
+            object.h=object._h
+
+            object.xsp=0
+            object.ysp=0
+            object.gsp=0
+        }
+    }
 }
 
 class EScreenManager
