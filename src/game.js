@@ -12,6 +12,38 @@ const escreen = require("./screen")
 const ewigets = require("./widget")
 const ERender = require("./render")
 
+class EHooks
+{
+    constructor()
+    {
+        /**
+         * Executes before clearing the scene
+         * @param {EGame} game 
+         */
+        this.beforedrawclear = function(game=new EGame()){}
+        /**
+         * Executes before drawing the scene (After Screen Clear)
+         * @param {EGame} game 
+         */
+        this.beforedraw = function(game=new EGame()){}
+        /**
+         * Executes after drawing the scene
+         * @param {EGame} game 
+         */
+        this.afterdraw = function(game=new EGame()){}
+        /**
+         * Executes before updating the scene
+         * @param {EGame} game 
+         */
+        this.beforeupdate = function(game=new EGame()){}
+        /**
+         * Executes after updating the scene
+         * @param {EGame} game 
+         */
+        this.afterupdate = function(game=new EGame()){}
+    }
+}
+
 class EGame
 {
     constructor(Render=new ERender(),Options={})
@@ -20,6 +52,10 @@ class EGame
          * Frames per Second of this Instance
          */
         this.fps = 0
+        /**
+         * A Collection of Hooks
+         */
+        this.hooks = new EHooks()
         /**
          * Currently viewing EScreen
          */
@@ -151,6 +187,20 @@ class EGame
         {
             util.print("warn","Screen "+id+" does not exist!")
         }
+    }
+    StartRender()
+    {
+        const mainWorker = require("./workers/main").main
+        mainWorker(this)
+    }
+    StopRender()
+    {
+        cancelAnimationFrame(this.interval)
+    }
+    RestartRender()
+    {
+        this.StopRender()
+        this.StartRender()
     }
 }
 module.exports = EGame

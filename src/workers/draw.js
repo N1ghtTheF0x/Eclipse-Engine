@@ -2,6 +2,7 @@ const ERender = require("./../render")
 const eobjectM = require("./../objects")
 const ewidgets = require("./../widget")
 const EGame = require("./../game")
+const utils = require("../utils")
 
 function HardwareDraw(Render=new ERender(),objects=[new eobjectM.main()])
 {
@@ -124,19 +125,21 @@ function SoftwareDraw(Render=new ERender(),objects=[new eobjectM.main(),new ewid
 {
     function RenderEObject(object=objects[0])
     {
-        if((object)&&(object._image))
+        if(object)
         {
-            if((object instanceof eobjectM.main)&&(object._canvas.width!==0&&object._canvas.height!==0))
+            try
             {
-                //object._ctx.clearRect(0,0,object.dw,object.dh)
-                //object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.w,object.h)
-                object._ctx.clearRect(0,0,object.dw,object.dh)
-                object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.w/2,object.h/2)
-                Render.ctx.drawImage(object._canvas,0,0,object.dw,object.dh,object.x*Render.factor,object.y*Render.factor,object.w*Render.factor,object.h*Render.factor)
+                if(object instanceof eobjectM.main)
+                {
+                    object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.sw,object.sh)
+                    Render.ctx.drawImage(object._canvas,0,0,object.sw,object.sh,object.x*Render.factor,object.y*Render.factor,object.w*Render.factor,object.h*Render.factor)
+                    Render.ctx.fillStyle=utils.RGBA(0,0,255,0.5)
+                    Render.ctx.fillRect(object.x*Render.factor,object.y*Render.factor,object.w*Render.factor,object.h*Render.factor)
+                }     
             }
-            if(object instanceof ewidgets.button)
+            catch(e)
             {
-                Render.ctx.drawImage(object._image,0,0,object._w,object._h,object.x*Render.factor,object.y*Render.factor,object._w*Render.factor,object._h*Render.factor)
+                utils.print("error","Error At Software Render:\n\n"+e)
             }
         }
     }
@@ -150,10 +153,14 @@ function SoftwareDraw(Render=new ERender(),objects=[new eobjectM.main(),new ewid
             }
         }
     }
+    Render.ctx.fillStyle="black"
+    Render.ctx.fillRect(Render.input.cursor.x,Render.input.cursor.y,2*Render.factor,2*Render.factor)
 }
 function Tick(Game=new EGame(),objects=[new eobjectM.main()])
 {
+    Game.hooks.beforedrawclear(Game)
     Game.render.Clear()
+    Game.hooks.beforedraw(Game)
     if(Game.render.gl&&Game.render.gl!==null&&Game.hardware)
     {
         HardwareDraw(Render,objects)
@@ -163,5 +170,6 @@ function Tick(Game=new EGame(),objects=[new eobjectM.main()])
         Game.render.SetResolution(window.innerWidth,window.innerHeight)
         SoftwareDraw(Render,objects)
     }
+    Game.hooks.afterdraw(Game)
 }
 module.exports = Tick

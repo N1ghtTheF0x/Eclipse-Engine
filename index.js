@@ -66,19 +66,16 @@ function Window()
         {
             if(args.includes("--edev")||args.includes("-d"))
             {
-                util.print("warn","Developer Tools on! Don't report bugs/glitches if this is on!")
+                util.print("warn","Developer Tools on! Don't report bugs/glitches if this is on and you have executed code inside!")
                 win.webContents.openDevTools({mode:"detach",activate:false})
             }
         })
     }
     
 }
+
 electron.app.whenReady().then(Window)
 .catch(function(error)
 {
     util.print("error",error)
-})
-.finally(function()
-{
-    util.print("warn","Only log of Electron visible here. To view the log of the game, start the game with developer tools")
 })

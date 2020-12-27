@@ -28,5 +28,6 @@ else
     electron.dialog.showMessageBoxSync(null,{title:"No Init Script!",message:"There's no Init Script in the Game folder!",detail:"Contact the Developer!",type:"warning",buttons:["Ok"]})
     Game.screenmanager.SwitchToEScreen("dummy",0)
 }
-mainWorker(Game)
+Game.StartRender()
 Game.render.input.Init(Game.render.input)
+window.game=Game

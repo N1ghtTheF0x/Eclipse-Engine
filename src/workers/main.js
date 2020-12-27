@@ -15,7 +15,7 @@ function main(Mtimestamp=0,GAME=new EGame())
     Game.current.update(Game)
     draw(Game,Game.current.objects)
     Game.render.currentObjects = Game.current.objects
-    Game.render.input.ControllerUpdate()
+    //Game.render.input.ControllerUpdate()
     Game.UpdateInterval(Render.window.requestAnimationFrame(function(time)
     {
         main(time,Game)

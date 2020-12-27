@@ -382,32 +382,67 @@ class ETileset
  */
 function collision(obj1=new EObjectClass(),obj2=new EObjectClass())
 {
-    const hitbox1 = obj1.GetHitbox()
-    const hitbox2 = obj2.GetHitbox()
-    if(hitbox2.bottom<=hitbox1.top)
     {
-        return "top"
-    }
-    else if(hitbox2.top<=hitbox1.bottom)
-    {
-        return "bottom"
-    }
-    else
-    {
-        if(hitbox2.left<=hitbox1.right)
+        var vX = (obj1.x+(obj1.w/2)) - (obj2.x+(obj2.w/2)),
+              vY = (obj1.y+(obj1.h/2)) - (obj2.y+(obj2.h/2)),
+              hW = (obj1.w/2)+(obj2.w/2),
+              hH = (obj1.h/2)+(obj2.h/2),
+              colDir = "none"
+        if(Math.abs(vX)<hW&&Math.abs(vY)<hH)
         {
-            return "right"
+            var oX = hW-Math.abs(vX),
+                  oY = hH-Math.abs(vY)
+            if(oX>=oY)
+            {
+                if(vY>0)
+                {
+                    obj1.y += oY
+                    colDir = "top"
+                }
+                else
+                {
+                    obj1.y -= oY
+                    colDir = "bottom"
+                }
+            }
+            else
+            {
+                if(vX>0)
+                {
+                    obj1.x += oX
+                    colDir = "left"
+                }
+                else
+                {
+                    obj1.x -= oX
+                    colDir = "right"
+                }
+            }
         }
-        else if(hitbox2.right<=hitbox1.left)
+        if(colDir==="top")
         {
-            return "left"
+            return "top"
+        }
+        else if(colDir==="bottom")
+        {
+            return "bottom"
         }
         else
         {
-            return "none"
+            if(colDir==="left")
+            {
+                return "left"
+            }
+            else if(colDir==="right")
+            {
+                return "right"
+            }
+            else
+            {
+                return "none"
+            }
         }
     }
-
 }
 const globals = {
     Gacc:0.046875,

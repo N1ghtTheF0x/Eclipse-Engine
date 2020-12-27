@@ -119,7 +119,7 @@ class EInput
     }
     Init(controls=new EInput())
     {
-        this.window.document.addEventListener("keydown",function(event)
+        this.window.addEventListener("keydown",function(event)
         {
             event.preventDefault()
             controls.any=true
@@ -130,19 +130,19 @@ class EInput
             this.lastInputDevice = "Keyboard"
             
         },false)
-        this.window.document.addEventListener("keyup",function(event)
+        this.window.addEventListener("keyup",function(event)
         {
             event.preventDefault()
             controls.keyboardPressed.any=false
             controls.keyboardPressed[event.code]=false
         },false)
-        this.window.document.addEventListener("mousemove",function(event)
+        this.window.addEventListener("mousemove",function(event)
         {
             event.preventDefault()
-            controls.cursor.x=event.clientX
-            controls.cursor.y=event.clientY
+            controls.cursor.x=event.offsetX
+            controls.cursor.y=event.offsetY
         },false)
-        this.window.document.addEventListener("onmousedown",function(event)
+        this.window.addEventListener("onmousedown",function(event)
         {
             event.preventDefault()
             controls.cursor.ButtonIndex=event.button
@@ -170,7 +170,7 @@ class EInput
                 }
             }
         },false)
-        this.window.document.addEventListener("onmouseup",function(event)
+        this.window.addEventListener("onmouseup",function(event)
         {
             event.preventDefault()
             if(event.button)

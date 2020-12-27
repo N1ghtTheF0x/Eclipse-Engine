@@ -1,6 +1,9 @@
 const _console = require("console").Console
+const path = require("path")
 const fs = require("fs")
-const fileconsole = new _console(fs.createWriteStream(__dirname+"/../out.log"),fs.createWriteStream(__dirname+"/../error.log"))
+const latestlogfile = fs.createWriteStream(path.resolve(process.resourcesPath,"latest.log"))
+const fileconsole = new _console(latestlogfile,latestlogfile)
+const console = new _console(process.stdout,process.stderr)
 /**
  * A sleep function to pause | returns a promise
  * @param {number} ms 
