@@ -3,13 +3,21 @@ const djs = require("discord.js")
 
 class EDiscord
 {
-    constructor(id="",token="")
+    /**
+     * The Discord Rich Presence Client. Shows cool stuff on Discord! You need to create an Application at https://discord.com/developers/applications
+     * @param {string} id  - The ID of the Application
+     * @param {string} token - The Secret Token of the Application. Better hide it!
+     */
+    constructor(id,token)
     {
         this.id = id
         this.token = token
         this.client = new drpc.Client({transport:"ipc"})
         this.loggedin = false
     }
+    /**
+     * Create an Connection to Discord!
+     */
     login()
     {
         if(TestDiscordFeature())
@@ -22,6 +30,9 @@ class EDiscord
             })
         }
     }
+    /**
+     * Gets the Details of the User if logged in
+     */
     getUser()
     {
         if(this.loggedin)
@@ -29,26 +40,18 @@ class EDiscord
             return this.client.user
         }
     }
+    /**
+     * @ignore
+     */
     _loggedin(bool=true)
     {
         this.loggedin=bool
     }
-    setActivity(data={
-        state: "string",
-        details: "string",
-        startTimestamp: new Date(),
-        endTimestamp: new Date(),
-        largeImageKey: "string",
-        largeImageText: "string",
-        smallImageKey: "string",
-        smallImageText: "string",
-        instance: false,
-        partySize: 0,
-        partyMax: 0,
-        matchSecret: "string",
-        spectateSecret: "string",
-        joinSecret: "string"
-        })
+    /**
+     * Sets The Presence of the Discord User (Playing \*insert game title\*)
+     * @param {drpc.Presence} data - The Presence to Set
+     */
+    setActivity(data)
     {
         if(this.loggedin)
         {
@@ -56,6 +59,9 @@ class EDiscord
         }
     }
 }
+/**
+ * Tests the Connection to Discord
+ */
 function TestDiscordFeature()
 {
     try

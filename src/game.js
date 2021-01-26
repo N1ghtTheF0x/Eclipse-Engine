@@ -3,7 +3,7 @@ const Escreen = require("./screen")
 const remote = require("electron").remote
 const eaudio = require("./audio")
 const debug = require("./debug")
-const discord = require("./discord")
+const EDiscord = require("./discord")
 const error = require("./error")
 const io = require("./io")
 const eobjects = require("./objects")
@@ -12,33 +12,56 @@ const escreen = require("./screen")
 const ewigets = require("./widget")
 const ERender = require("./render")
 
+class EDebug
+{
+    constructor()
+    {
+        /**
+         * Returns `true` if debug is on
+         */
+        this.on=false
+        /**
+         * Draws the Hitboxes of `EObjects`
+         */
+        this.drawhitbox=false
+        /**
+         * See Stats like FPS, last key pressed, etc.
+         */
+        this.statsondisplay=false
+        /**
+         * Returns `true` if the developer tools by chrome is on
+         */
+        this.isdevconon=false
+    }
+}
+
 class EHooks
 {
     constructor()
     {
         /**
          * Executes before clearing the scene
-         * @param {EGame} game 
+         * @type {function(EGame): void}
          */
         this.beforedrawclear = function(game=new EGame()){}
         /**
          * Executes before drawing the scene (After Screen Clear)
-         * @param {EGame} game 
+         * @type {function(EGame): void}
          */
         this.beforedraw = function(game=new EGame()){}
         /**
          * Executes after drawing the scene
-         * @param {EGame} game 
+         * @type {function(EGame): void}
          */
         this.afterdraw = function(game=new EGame()){}
         /**
          * Executes before updating the scene
-         * @param {EGame} game 
+         * @type {function(EGame): void}
          */
         this.beforeupdate = function(game=new EGame()){}
         /**
          * Executes after updating the scene
-         * @param {EGame} game 
+         * @type {function(EGame): void}
          */
         this.afterupdate = function(game=new EGame()){}
     }
@@ -46,7 +69,12 @@ class EHooks
 
 class EGame
 {
-    constructor(Render=new ERender(),Options={})
+    /**
+     * The Heart of Eclipse Engine! Contains everything you need
+     * @param {ERender} Render - The `ERender` Object 
+     * @param {{}} Options - The 
+     */
+    constructor(Render,Options={})
     {
         /**
          * Frames per Second of this Instance
@@ -82,8 +110,9 @@ class EGame
         this.hardware = false
         /**
          * Discord Client of this Instance
+         * @type {EDiscord}
          */
-        this.discordrpc = new discord("","")
+        this.discordrpc = null
         /**
          * All EScreens of this Instance. **THEY ARE IN THE PROPERTY `map`!!!!**
          */
@@ -97,9 +126,9 @@ class EGame
          */
         this.packaged = __dirname.includes("app.asar")
         /**
-         * DEBUG enabler
+         * Check debugging stuff
          */
-        this.DEBUG = false
+        this.DEBUG = new EDebug()
         /**
          * E I/O Access
          */
@@ -111,7 +140,7 @@ class EGame
         /**
          * EDiscord Access
          */
-        this.discord = discord
+        this.discord = EDiscord
         /**
          * EScreen Access
          */
@@ -141,36 +170,54 @@ class EGame
          */
         this.utils = utils
     }
-    UpdateEScreen(newEScreen=new Escreen.EScreen())
+    /**
+     * Updates the current `EScreen`
+     * @param {Escreen.EScreen} newEScreen - The new `EScreen` Object
+     */
+    UpdateEScreen(newEScreen)
     {
         this.old=this.current
         this.current = newEScreen
         utils.print("info","Updated Game Variables")
     }
-    UpdateRender(Render=new ERender())
+    /**
+     * Updates the current `ERender`
+     * @param {ERender} Render - The new `ERender` Object
+     */
+    UpdateRender(Render)
     {
         this.render=Render
         utils.print("info","Updated Game Render")
     }
-    UpdateInterval(interval=0)
+    /**
+     * Updates the ID of the `requestAnimationFrame`
+     * @param {number} interval 
+     */
+    UpdateInterval(interval)
     {
         this.interval=interval
     }
+    /**
+     * Update Options
+     */
     UpdateOptions()
     {
         this.options=EOptions.GetOptionFile()
     }
-    UpdateDiscord(Discord=new discord("",""))
+    /**
+     * Updates the Discord Client
+     * @param {EDiscord} Discord 
+     */
+    UpdateDiscord(Discord)
     {
         this.discordrpc=Discord
     }
     /**
      * Switch to a another EScreen
      * @param {string} id - The ID of the EScreen to switch
-     * @param {number} level - The Level of the game
      * @param {boolean} withSetup - Should it execute the setup function?
      */
-    SwitchToEScreen(id="dummy",level=0,withSetup=true)
+    SwitchToEScreen(id,withSetup=true)
     {
         if(this.screenmanager.HasScreen(id))
         {
@@ -180,7 +227,7 @@ class EGame
             if(withSetup)
             {
                 util.print("info","Executing setup function...")
-                Screen.setup()
+                Screen.setup(this,Screen)
             }
         }
         else
@@ -188,15 +235,24 @@ class EGame
             util.print("warn","Screen "+id+" does not exist!")
         }
     }
+    /**
+     * Starts the Render
+     */
     StartRender()
     {
-        const mainWorker = require("./workers/main").main
-        mainWorker(this)
+        const mainWorker = require("./workers/main")
+        mainWorker.MAIN(this)
     }
+    /**
+     * Stops the Render
+     */
     StopRender()
     {
         cancelAnimationFrame(this.interval)
     }
+    /**
+     * Restarts the Render
+     */
     RestartRender()
     {
         this.StopRender()

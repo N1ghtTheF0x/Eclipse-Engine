@@ -1,4 +1,5 @@
 const Mobjects = require("./objects")
+const Mwidgets = require("./widget")
 const Maudio = require("./audio")
 const util = require("./utils")
 const EGame = require("./game")
@@ -9,17 +10,19 @@ class EScreen
      * A EScreen with his own `setup` for first execution and `update` for every frame
      * @param {string} id - The name of the ID, for example: title, game, menu, multiplayer
      * @param {string} name - The displayname of the ID, for example: "Title Screen", "Ingame", "Main Menu", "Multiplayer" 
-     * @param audio - A list of EAudio Objects
-     * @param objects - A list of EObjects
-     * @param setup - A function that only executes once
-     * @param update - A function that executes every frame. Contains `ERender` as first Parameter
+     * @param {(Maudio.EAudio|Maudio.EAudioAllegro|Maudio.EAudioBoost|Maudio.EAudioIntroLoop|Maudio.EAudioStepUp)[]} audio - A list of EAudio Objects
+     * @param {()[]} objects - A list of EObjects
+     * @param {(Mwidgets.EWidgetBase,Mwidgets.EWidgetButton)[]} widgets - A List of EWidgets
+     * @param {function(EGame,EScreen): void} setup - A function that only executes once
+     * @param {function(EGame,EScreen): void} update - A function that executes every frame. Contains `ERender` as first Parameter
      */
-    constructor(id="dummy",name="Dummy Screen Name",audio=[new Maudio.introloop(),new Maudio.audio(),new Maudio.allegro(),new Maudio.boost(),new Maudio.stepUp()],objects=[new Mobjects.door(),new Mobjects.main(),new Mobjects.player(),new Mobjects.trigger()],setup=function(){},update=function(Game=new EGame()){})
+    constructor(id,name,audio,objects,widgets,setup,update)
     {
         this.id = id
         this.name = name
         this.audio = audio
         this.objects = objects
+        this.widgets = widgets
         this.setup = setup
         this.update = update
     }
@@ -43,7 +46,6 @@ class EScreen
         }
     }
 }
-
 class EScreenManager
 {
     /**
@@ -51,20 +53,24 @@ class EScreenManager
     */
     constructor()
     {
+        /**
+         * @type {Map<string,EScreen>}
+         */
         this.map = new Map([["dummy",new EScreen("dummy","Dummy Screen Name",[],[],function(){alert("This is a Dummy Screen.")},function(){})]])
     }   
     /**
      * Adds a EScreen to the EScreen Manager
      * @param {string} id - The name of the ID, for example: title, game, menu, multiplayer
      * @param {string} name - The displayname of the ID, for example: "Title Screen", "Ingame", "Main Menu", "Multiplayer" 
-     * @param audio - A list of EAudio Objects
-     * @param objects - A list of EObjects
-     * @param setup - A function that only executes once
-     * @param update - A function that executes every frame. Contains `EGame` as first Parameter
+     * @param {(Maudio.EAudio|Maudio.EAudioAllegro|Maudio.EAudioBoost|Maudio.EAudioIntroLoop|Maudio.EAudioStepUp)[]} audio - A list of EAudio Objects
+     * @param {()[]} objects - A list of EObjects
+     * @param {(Mwidgets.EWidgetBase,Mwidgets.EWidgetButton)[]} widgets - A List of EWidgets
+     * @param {function(EGame,EScreen): void} setup - A function that only executes once
+     * @param {function(EGame,EScreen): void} update - A function that executes every frame. Contains `ERender` as first Parameter
      */
-    AddScreen(id="dummy",name="Dummy Screen Name",audio=[new Maudio.introloop(),new Maudio.audio(),new Maudio.allegro(),new Maudio.boost(),new Maudio.stepUp()],objects=[new Mobjects.door(),new Mobjects.main(),new Mobjects.player(),new Mobjects.playertemp(),new Mobjects.temp(),new Mobjects.trigger()],setup=function(){},update=function(Game=new EGame()){})
+    AddScreen(id,name,audio,objects,setup,update)
     {
-        const ESCREEN = new EScreen(id,name,audio,objects,setup,update)
+        const ESCREEN = new EScreen(id,name,audio,objects,widgets,setup,update)
         if(!this.map.has(id))
         {
             this.map.set(id,ESCREEN)
@@ -79,7 +85,7 @@ class EScreenManager
      * Removes a EScreen from the EScreen Manager
      * @param {string} id - The ID of the EScreen to remove
      */
-    RemoveScreen(id="dummy")
+    RemoveScreen(id)
     {
         if(this.map.has(id))
         {
@@ -94,7 +100,7 @@ class EScreenManager
      * Check if the EScreen already exists
      * @param {string} id - The ID of the EScreen to check 
      */
-    HasScreen(id="dummy")
+    HasScreen(id)
     {
         if(this.map.has(id))
         {
@@ -109,6 +115,6 @@ class EScreenManager
 
 module.exports =
 {
-    EScreen:EScreen,
-    EScreenManager:EScreenManager
+    EScreen,
+    EScreenManager
 }

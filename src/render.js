@@ -9,7 +9,7 @@ module.exports = class ERender
      * This is the main Render. Here are all things related to your screen and drawn objects. The Input is also present here for Keyboard/Mouse/Gamepad detection
      * @param {window} WINDOW - The window variable which contains **E V E R Y T H I N G**
      */
-    constructor(WINDOW=window)
+    constructor(WINDOW)
     {
         /**
          * need a reference for canvas-creation and input
@@ -50,26 +50,33 @@ module.exports = class ERender
          * The Hardware Context. GPU driven.
          */
         this.gl = this.canvasGL.getContext("webgl2")
+        this.hasGL = false
         if(this.gl===null)
         {
             utils.print("warn","Hardware Render is not available!")
         }
         else
         {
-
+            this.hasGL=true
         }
         this.ctx = this.canvasCTX.getContext("2d")
+        this.hasCTX = false
         if(this.ctx===null)
         {
             utils.print("warn","Software Render is not available!")
         }
+        else
+        {
+            this.hasCTX=true
+        }
+        this.program = this.GetShaderProgram("./src/shaders/image_vertex.glsl","./src/shaders/image_fragment.glsl")
     }
     /**
      * Set the canvas's resolution. **0 cannot be used as a parameter!**
      * @param {number} width - Width of the new canvas
      * @param {number} height - Height of the new canvas
      */
-    SetResolution(width=1920,height=1080)
+    SetResolution(width,height)
     {
         if(width!==0)
         {
@@ -121,7 +128,7 @@ module.exports = class ERender
     * @param {number} type - The type of shader: Fragment or Vertex
     * @param {string} path - Path to the Shader's source file
     */
-    GetShader(type=this.gl.VERTEX_SHADER,path="")
+    GetShader(type,path)
     {
         if(this.gl&&this.gl!==null)
         {
@@ -136,6 +143,7 @@ module.exports = class ERender
                     this.gl.deleteShader(shader)
                     return null
                 }
+                utils.print("info","Created WenGLShader")
                 return shader
             }
             else
@@ -153,7 +161,7 @@ module.exports = class ERender
     * @param {string} vertexPath - Path to the Vertex Shader's source file
     * @param {string} fragmentPath - Path to the Fragment Shader's source file
     */
-    GetShaderProgram(vertexPath="",fragmentPath="")
+    GetShaderProgram(vertexPath,fragmentPath)
     {
         if(this.gl&&this.gl!==null)
         {
@@ -171,6 +179,7 @@ module.exports = class ERender
                     this.gl.deleteProgram(shaderprogram)
                     return null
                 }
+                utils.print("info","Created WebGLProgram")
                 return shaderprogram  
             }
             else
@@ -203,7 +212,7 @@ module.exports = class ERender
      * Calculate the frames per second
      * @param {number} delta - The delta time
      */
-    FramesPerSecondCalc(delta=0)
+    FramesPerSecondCalc(delta)
     {
         this.FPS.passed=(delta-this.FPS.old)/1000
         this.FPS.old=delta

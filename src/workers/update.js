@@ -5,4 +5,4 @@ function Tick(Game=new EGame(),UpdateFunction=function(Game=new EGame()){})
     UpdateFunction(Game)
     Game.hooks.afterupdate(Game)
 }
-module.exports = Tick
+module.exports = {Tick}

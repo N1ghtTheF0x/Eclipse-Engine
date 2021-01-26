@@ -4,9 +4,11 @@ const ewidgets = require("./../widget")
 const EGame = require("./../game")
 const utils = require("../utils")
 
-function HardwareDraw(Render=new ERender(),objects=[new eobjectM.main()])
+function HardwareDraw(Game=new EGame(),objects=[new eobjectM.EObject()])
 {
-    function RenderEObject(eobject=new eobjectM.main())
+    const Render = Game.render
+    const program = Render.GetShaderProgram("./src/shaders/image_vertex.glsl","./src/shaders/image_fragment.glsl")
+    function RenderEObject(eobject=new eobjectM.EObject())
     {
         function SetRectangle(x=0,y=0,width=0,height=0)
         {
@@ -24,7 +26,6 @@ function HardwareDraw(Render=new ERender(),objects=[new eobjectM.main()])
                 x2,y2
             ]),Render.gl.STATIC_DRAW)
         }
-        const program = Render.GetShaderProgram("./src/shaders/image_vertex.glsl","./src/shaders/image_fragment.glsl")
         if(program!==null)
         {
             const PosAttribute = Render.gl.getAttribLocation(program,"a_position")
@@ -97,7 +98,6 @@ function HardwareDraw(Render=new ERender(),objects=[new eobjectM.main()])
             Render.gl.drawArrays(Render.gl.TRIANGLES,0,6)
 
             Render.gl.deleteTexture(texture)
-            Render.gl.deleteProgram(program)
             Render.gl.deleteVertexArray(vao)
 
             Render.gl.deleteBuffer(PosBuffer)
@@ -121,20 +121,24 @@ function HardwareDraw(Render=new ERender(),objects=[new eobjectM.main()])
         }
     }
 }
-function SoftwareDraw(Render=new ERender(),objects=[new eobjectM.main(),new ewidgets.button()])
+function SoftwareDraw(Game=new EGame(),objects=[new eobjectM.EObject(),new ewidgets.EWidgetButton()])
 {
+    const Render = Game.render
     function RenderEObject(object=objects[0])
     {
         if(object)
         {
             try
             {
-                if(object instanceof eobjectM.main)
+                if(object instanceof eobjectM.EObject)
                 {
                     object._ctx.drawImage(object._image,object.sx,object.sy,object.sw,object.sh,0,0,object.sw,object.sh)
-                    Render.ctx.drawImage(object._canvas,0,0,object.sw,object.sh,object.x*Render.factor,object.y*Render.factor,object.w*Render.factor,object.h*Render.factor)
-                    Render.ctx.fillStyle=utils.RGBA(0,0,255,0.5)
-                    Render.ctx.fillRect(object.x*Render.factor,object.y*Render.factor,object.w*Render.factor,object.h*Render.factor)
+                    Render.ctx.drawImage(object._canvas,0,0,object.sw,object.sh,object.x*Render.factor,object.y*Render.factor,object.w*Render.factor*object.scale,object.h*Render.factor*object.scale)
+                    if(Game.DEBUG.drawhitbox)
+                    {
+                        Render.ctx.fillStyle=utils.RGBA(0,0,255,0.5)
+                        Render.ctx.fillRect(object.x*Render.factor,object.y*Render.factor,object.w*Render.factor,object.h*Render.factor)
+                    }
                 }     
             }
             catch(e)
@@ -153,23 +157,21 @@ function SoftwareDraw(Render=new ERender(),objects=[new eobjectM.main(),new ewid
             }
         }
     }
-    Render.ctx.fillStyle="black"
-    Render.ctx.fillRect(Render.input.cursor.x,Render.input.cursor.y,2*Render.factor,2*Render.factor)
 }
-function Tick(Game=new EGame(),objects=[new eobjectM.main()])
+function Tick(Game=new EGame(),objects=[new eobjectM.EObject()])
 {
     Game.hooks.beforedrawclear(Game)
     Game.render.Clear()
     Game.hooks.beforedraw(Game)
-    if(Game.render.gl&&Game.render.gl!==null&&Game.hardware)
+    if(Game.render.hasGL&&Game.hardware)
     {
         HardwareDraw(Render,objects)
     }
-    else if(Game.render.ctx&&Game.render.ctx!==null&&!Game.hardware)
+    else if(Game.render.hasCTX&&!Game.hardware)
     {
         Game.render.SetResolution(window.innerWidth,window.innerHeight)
-        SoftwareDraw(Render,objects)
+        SoftwareDraw(Game,objects)
     }
     Game.hooks.afterdraw(Game)
 }
-module.exports = Tick
+module.exports = {Tick}

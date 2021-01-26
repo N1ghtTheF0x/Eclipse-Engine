@@ -8,7 +8,7 @@ class EAudio
      * @param {string} src - Path to audio file (`MP3`|`OGG`|`FLAC`|`WAV`) 
      * @param {boolean} loop - Should the audio loop when finished?
      */
-    constructor(src="",loop=false)
+    constructor(src,loop=false)
     {
         /**
          * The Path to the audio
@@ -19,20 +19,17 @@ class EAudio
          */
         this.loop = loop
         this.audioContext = new AudioContext()
-        try
+        this._audio = new Audio(this.src)
+        this._audio.addEventListener("error",function(error)
         {
-            this._audio = new Audio(this.src)
-        }
-        catch(err)
-        {
-            util.print("warn","The Audio Path is wrong or not present!")
-            util.print("error",err)
-        }
+            util.print("warn","The Audio from "+src+" got an Error!")
+            util.print("error",error.message+" in "+error.filename+" at Line "+error.lineno+":"+error.colno)
+        })
         this.track = this.audioContext.createMediaElementSource(this._audio)
         this.track.connect(this.audioContext.destination)
         this._audio.loop=this.loop
         /**
-         * Has the audio stopped by the stop function?
+         * Has the audio stopped by the `stop` function?
          */
         this.stopped = false
         /**
@@ -65,9 +62,10 @@ class EAudio
      */
     pause()
     {
+        const SRC = this.src
         try
         {
-            const SRC = this.src
+            
             const TIME = this._audio.currentTime
             this._audio.pause()
             util.Dprint("Paused "+SRC+" at "+TIME)
@@ -83,11 +81,12 @@ class EAudio
      */
     stop()
     {
+        const SRC = this.src
         try
         {
-            const SRC = this.src
-            this._audio.currentTime=0
+            
             this._audio.pause()
+            this._audio.currentTime=0
             util.Dprint("Stopped "+SRC)
             this.stopped = true
         }
@@ -98,7 +97,7 @@ class EAudio
     }
     /**
      * Returns a boolean if the audio is paused
-     * @returns true | false
+     * @returns {boolean}
      */
     isPaused()
     {
@@ -109,23 +108,23 @@ class EAudio
 class EAudioStepUp
 {
     /**
-     * A collection of EAudio which play together a final Audio
-     * @param {EAudio[]} EAudioArray - An Array of EAudio. First Index is the refrence
+     * A collection of EAudio Solo Tracks which play together the final product
+     * @param {EAudio[]} EAudioArray - An Array of EAudio. `EAudio[0]` Index is the reference
      */
-    constructor(EAudioArray=[new EAudio()])
+    constructor(EAudioArray)
     {
         this.EAudioArray = EAudioArray
-        this.refrence = this.EAudioArray[0]
+        this.reference = this.EAudioArray[0]
         this.NextToPlay = 1
 
     }
     /**
-     * Play the refrence (First Item in the array)
+     * Play the reference (First Item in the array)
      * @param {number} ms - Where to strart?
      */
     play(ms=0)
     {
-        this.refrence.play(ms)
+        this.reference.play(ms)
     }
     /**
      * Play the next track of the audio
@@ -135,9 +134,9 @@ class EAudioStepUp
         if(this.NextToPlay!==null)
         {
             const eaudio = this.EAudioArray[this.NextToPlay]
-            if(!this.refrence.isPaused()||!this.refrence.stopped)
+            if(!this.reference.isPaused()||!this.reference.stopped)
             {
-                eaudio.play(this.refrence._audio.currentTime)
+                eaudio.play(this.reference._audio.currentTime)
             }
             this.NextToPlay++
             if(this.EAudioArray[this.NextToPlay])
@@ -151,11 +150,11 @@ class EAudioStepUp
 class EAudioBoost
 {
     /**
-     * Dynamic Music based on Sonic's boost. It's based on two tracks, one orginal, the other some kind of fast version of it.
+     * Dynamic Music based on Sonic's boost. It's two tracks, one orginal, the other some kind of fast version of it or with phaser and other stuff.
      * @param {EAudio} main - The orginal unmodified Audio
      * @param {EAudio} fx - The modified orginal Audio
      */
-    constructor(main=new EAudio(),fx=new EAudio())
+    constructor(main,fx)
     {
         this.main = main
         this.fx = fx
@@ -212,11 +211,11 @@ class EAudioBoost
 class EAudioAllegro
 {
     /**
-     * Two Audio: One orginal and the other is a Allegro version of the orginal. Use this if you want Boss music
-     * @param {EAudio} orginal 
-     * @param {EAudio} allegroVersion 
+     * Two Audio: One orginal and the other is a Allegro version of the orginal. Use this if you want some cool Boss music with two Phases
+     * @param {EAudio} orginal - The Orignal Audio
+     * @param {EAudio} allegroVersion - Fast boy Version of the Orignal Audio
      */
-    constructor(orginal=new EAudio(),allegroVersion=new EAudio())
+    constructor(orginal,allegroVersion)
     {
         this.orginal = orginal
         this.allegroVersion = allegroVersion
@@ -234,19 +233,51 @@ class EAudioAllegro
             this.IsOrginal = false
         }
     }
+    /**
+     * Reverts back to the Orignal version
+     */
+    revert()
+    {
+        if(!this.IsOrginal)
+        {
+            this.allegroVersion.stop()
+            this.orginal.play()
+            this.IsOrginal = true
+        }
+    }
 }
 class EAudioIntroLoop
 {
-    constructor(intro=new EAudio(),loop=new EAudio())
+    /**
+     * An Audio Track with an Intro and Loop
+     * @param {EAudio} intro - The Intro. This is only played once
+     * @param {EAudio} loop - The Loop. This is played back and forth
+     */
+    constructor(intro,loop)
     {
         this.intro = intro
         this.loop = loop
+        this.IsInLoop = false
+        var self = this
+        this.intro._audio.addEventListener("ended",function()
+        {
+            self.IsInLoop = true
+            self.loop.play()
+        })
+    }
+    /**
+     * Starts playing
+     */
+    start()
+    {
+        this.intro.play()
     }
 }
 /**
- * Stops all Audio currently playing if it gets too loud
+ * Stops all Audio currently playing if it gets too loud or weird
+ * @param {EGame} game - The `EGame` Object
  */
-function StopAllAudio(game=new EGame())
+function StopAllAudio(game)
 {
     const escreens = game.screenmanager.map
 
@@ -285,10 +316,10 @@ function StopAllAudio(game=new EGame())
 
 module.exports =
 {
-    audio:EAudio,
-    stepUp:EAudioStepUp,
-    boost:EAudioBoost,
-    stopAll:StopAllAudio,
-    allegro:EAudioAllegro,
-    introloop:EAudioIntroLoop
+    EAudio,
+    EAudioStepUp,
+    EAudioBoost,
+    StopAllAudio,
+    EAudioAllegro,
+    EAudioIntroLoop
 }

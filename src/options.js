@@ -7,6 +7,10 @@ const OPTIONS_PATH_FILE = path.resolve(electron.process.resourcesPath,"options.j
 
 module.exports = 
 {
+    /**
+     * Returns `true` if the Option File exists
+     * @returns {boolean}
+     */
     HasOptionFile()
     {
         if(fs.existsSync(OPTIONS_PATH_FILE))
@@ -18,19 +22,15 @@ module.exports =
             return false
         }
     },
+    /**
+     * Returns the Option File as Object
+     * @returns {{}}
+     */
     GetOptionFile()
     {
         if(this.HasOptionFile())
         {
-            if(fs.accessSync(OPTIONS_PATH_FILE,fs.constants.F_OK))
-            {
-                return JSON.parse(fs.readFileSync(OPTIONS_PATH_FILE,{encoding:"utf-8"}))
-            }
-            else
-            {
-                utils.print("warn","Could not read Option File - Read Access Denied!")
-                return {}
-            }
+            return JSON.parse(fs.readFileSync(OPTIONS_PATH_FILE,{encoding:"utf-8"}))
         }
         else
         {
@@ -38,6 +38,9 @@ module.exports =
             return {}
         }
     },
+    /**
+     * Creates a new Option File
+     */
     CreateOptionFile()
     {
         if(!this.HasOptionFile())
@@ -49,10 +52,14 @@ module.exports =
             utils.print("warn","Could not create Option File - File already exists!")
         }
     },
-    UpdateOptionFile(newOption={})
+    /**
+     * Updates the Option File
+     * @param {{}} newOption 
+     */
+    UpdateOptionFile(newOption)
     {
-        const oldOption = JSON.parse(this.GetOptionFile())
-        const constructedOption = {...oldOption,newOption}
+        const oldOption = this.GetOptionFile()
+        const constructedOption = {...oldOption,...newOption}
         fs.writeFileSync(OPTIONS_PATH_FILE,JSON.stringify(constructedOption),{encoding:"utf-8"})
     }
 }

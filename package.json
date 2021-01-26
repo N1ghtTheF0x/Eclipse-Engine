@@ -14,14 +14,16 @@
     "discord.js": "^12.5.1"
   },
   "devDependencies": {
-    "electron": "^11.1.0",
-    "electron-builder": "^22.9.1"
+    "electron": "11.2.1",
+    "electron-builder": "22.9.1"
   },
   "scripts": {
     "start": "npx electron .",
-    "debug": "npx electron . --edev",
+    "debug": "npx electron . --edev -edebug",
     "server": "npx electron . --server",
-    "build": "npx electron-builder"
+    "build": "npx electron-builder",
+    "hardware": "npx electron . --hardware",
+    "help": "npx electron . --help"
   },
   "build": {
     "productName": "Eclipse Engine",

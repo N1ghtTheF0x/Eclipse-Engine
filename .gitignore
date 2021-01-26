@@ -12,6 +12,10 @@ sound/*
 sound/sfx/*
 dist/*
 options.json
+conf/*
+!conf/default.json
+textures/fonts/*
+!textures/fonts/default_font.png
 # no test files
 test.*
 yarn.lock

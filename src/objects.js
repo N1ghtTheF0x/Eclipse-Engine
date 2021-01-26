@@ -1,9 +1,18 @@
-const util = require("./utils")
+const utils = require("./utils")
+const path = require("path")
+const io = require("./io")
 var idGiver = 0
 
 class EHitbox
 {
-    constructor(x=0,y=0,w=0,h=0)
+    /**
+     * The EHitbox. Used for Collision detection
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} w 
+     * @param {number} h 
+     */
+    constructor(x,y,w,h)
     {
         this.left = x
         this.right = x+w
@@ -22,7 +31,7 @@ class EObjectClass
      * @param {number} h - Height | any value
      * @param {number} type - The type of object like player, object, enemy, hazard and so on
      */
-    constructor(x=0,y=0,w=0,h=0,type="dummy")
+    constructor(x,y,w,h,type)
     {
         /**
          * X Position
@@ -102,6 +111,10 @@ class EObjectClass
         this.jump = 6.5 // Default 6.5
         this.grv = 0.21875 // Default 0.21875
     }
+    /**
+     * Returns a `EHitbox` of this Object
+     * @returns {EHitbox}
+     */
     GetHitbox()
     {
         return new EHitbox(this.x,this.y,this.w,this.h)
@@ -117,10 +130,9 @@ class EObject extends EObjectClass
      * @param {number} h - Height
      * @param {string} type - Type
      * @param {string} spritesheet - Path to spritesheet 
-     * @software
      * @hardware
      */
-    constructor(x=0,y=0,w=0,h=0,type="dummy",spritesheet="./textures/common/unknown.png",)
+    constructor(x,y,w,h,type,spritesheet)
     {
         super(x,y,w,h,type)
         /**
@@ -133,17 +145,11 @@ class EObject extends EObjectClass
          */
         this.error = false
         this._image = new Image()
-        try
+        this._image.src = this.spritesheet
+        this._image.addEventListener("error",function(err)
         {
-            this._image.src = this.spritesheet
-        }
-        catch(err)
-        {
-            util.print("warn","Couldn't set Image to "+spritesheet+"! Using default image.")
-            util.print("error",err)
-            this._image.src = "./textures/common/unknown.png"
-            this.error=true
-        }
+            utils.print("error","Error at image from "+spritesheet+":\n\n"+err.type+": "+err.message)
+        })
         this.dw = this.w*2
         this.dh = this.h*2
         /**
@@ -167,10 +173,12 @@ class EObject extends EObjectClass
         this._canvas.width = this.dw
         this._ctx = this._canvas.getContext("2d")
         this._ctx.imageSmoothingEnabled=false
+        this.scale = 1
         /**
          * A array containing various animations. Keep in mind you have to add the animations yourself using the `AddAnimation` function
+         * @type {{sx:number,sy:number,sw:number,sh:number[]}
          */
-        this.animation = [{sx:this.sx,sy:this.sy,sw:this.sw,sh:this.sh}]
+        this.animation = []
         /**
          * Use to calcute when to use which animation
          */
@@ -188,15 +196,16 @@ class EObject extends EObjectClass
      * @param {number} sw - Source Width 
      * @param {number} sh - Source Height
      */
-    AddAnimation(sx=0,sy=0,sw=0,sh=0)
+    AddAnimation(sx,sy,sw,sh)
     {
         this.animation.push({sx:sx,sy:sy,sw:sw,sh:sh})
     }
     /**
      * Sets the animation to the EObject by Index
      * @param {number} index - The Index of the animation 
+     * @software
      */
-    SetAnimation(index=0)
+    SetAnimation(index)
     {
         const aniObj = this.animation[index]
         this.sx=aniObj.sx
@@ -209,8 +218,10 @@ class EObject extends EObjectClass
     /**
      * Rotates the Image.
      * @param {number} deg - Degrees to rotate
+     * @hardware
+     * @software
      */
-    rotate(deg=90)
+    rotate(deg)
     {
         const radian = deg*Math.PI/180
         this._ctx.clearRect(0,0,this._w,this._h)
@@ -222,22 +233,42 @@ class EObject extends EObjectClass
         this.rotation = [SINUS,COSINUS]
         this.ang = deg
     }
-    translate(x=0,y=0)
+    /**
+     * Translates the Image
+     * @param {number} x - X-Offset
+     * @param {number} y - Y-Offset
+     * @hardware
+     */
+    translate(x,y)
     {
         this.translation = [x,y]
     }
 }
 class EObjectNet extends EObjectClass
 {
-    constructor(x=0,y=0,w=0,h=0,type="",spritesheet="")
+    /**
+     * Just like `EObject` but NodeJS-friendly
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} w 
+     * @param {number} h 
+     * @param {string} type 
+     * @param {string} spritesheet 
+     */
+    constructor(x,y,w,h,type,spritesheet)
     {
         super(x,y,w,h,type)
         this.spritesheet = spritesheet
     }
+    /**
+     * Converts this to an real `EObject`
+     * @returns {EObject}
+     */
     normalize()
     {
         const eobject = new EObject(this.x,this.y,this.w,this.h,this.type,this.spritesheet)
-        return eobject
+        const obj = {...this,...eobject}
+        return obj
     }
 }
 class EObjectPlayer extends EObject
@@ -252,7 +283,7 @@ class EObjectPlayer extends EObject
      * @software
      * @hardware
      */
-    constructor(x=0,y=0,w=0,h=0,spritesheet="")
+    constructor(x,y,w,h,spritesheet)
     {
         super(x,y,w,h,"player",spritesheet)
         /**
@@ -265,8 +296,9 @@ class EObjectPlayer extends EObject
         this.ground=false
         /**
          * Which direction the player is facing?
+         * @type {"none"|"left"|"right"|"up"|"down"}
          */
-        this.facing = "none"||"left"||"right"
+        this.facing = "none"||"left"||"right"||"up"||"down"
         /**
          * Got the Player hit by something like an enemy or hazard?
          */
@@ -289,38 +321,6 @@ class EObjectPlayer extends EObject
         this.godmode = false
     }
 }
-class ETrigger extends EObjectClass
-{
-    /**
-     * This is a Trigger Object, when the player is inside this, `ontrigger` gets executed
-     * @param {number} x - X Position 
-     * @param {number} y - Y Position
-     * @param {number} w - Width
-     * @param {number} h - Height
-     * @param {function(){}} ontrigger - What to do when player enters the zone
-     */
-    constructor(x=0,y=0,w=0,h=0,ontrigger=function(){})
-    {
-        super(x,y,w,h,"trigger")
-        this.ontrigger = ontrigger
-    }
-}
-class EDoor extends EObjectClass
-{
-    /**
-     * This is a Door function. If the player presses up, he executes `onpress`
-     * @param {number} x - X Position
-     * @param {number} y - Y Position
-     * @param {number} w - Width
-     * @param {number} h - Height
-     * @param {function(){}} onpress - What to do if player presses up
-     */
-    constructor(x=0,y=0,w=0,h=0,onpress=function(){})
-    {
-        super(x,y,w,h,"door")
-        this.onpress = onpress
-    }
-}
 class ETileset
 {
     /**
@@ -329,8 +329,25 @@ class ETileset
      * @param {number} h - Height of one tile
      * @param {string} tilesheet - Path to the tilesheet
      */
-    constructor(w=16,h=16,tilesheet="./textures/tilesheet.png")
+    constructor(w,h,tilesheet)
     {
+        class ETile
+        {
+            /**
+             * An Tile Object
+             * @param {number} sx 
+             * @param {number} sy 
+             * @param {number} sw 
+             * @param {number} sh 
+             */
+            constructor(sx,sy,sw,sh)
+            {
+                this.sx = sx
+                this.sy = sy
+                this.sw = sw
+                this.sh = sh
+            }
+        }
         /**
          * The width of one single tile
          */
@@ -345,8 +362,13 @@ class ETileset
         this.tilesheet = tilesheet
         this._image = new Image()
         this._image.src = this.tilesheet
+        this._image.addEventListener("error",function(err)
+        {
+            utils.print("error","Error at image from "+tilesheet+":\n\n"+err.type+": "+err.message)
+        })
         /**
          * All the possible tiles this tilesheets has. You need to add them yourself with `setTile`
+         * @type {ETile[]}
          */
         this.tiles = []
     }
@@ -355,9 +377,9 @@ class ETileset
      * @param {number} x - X Position in the tilesheet
      * @param {number} y - Y Position in the tilesheet
      */
-    setTile(x=0,y=0)
+    setTile(x,y)
     {
-        this.tiles.push({x:x,y:y,w:this.w,h:this.h})
+        this.tiles.push({sx:x,sy:y,sw:this.w,sh:this.h})
     }
     /**
      * Turns the tile in the `tiles` array to a EObject
@@ -365,85 +387,16 @@ class ETileset
      * @param {number} x - X Position
      * @param {number} y - Y Position
      */
-    toEObject(index=0,x=0,y=0)
+    toEObject(index,x,y)
     {
         const tile = this.tiles[index]
-        const eobject = new EObject(x,y,tile.w,tile.h,"object",this.tilesheet)
-        eobject.AddAnimation(tile.x,tile.y,tile.w,tile.h)
+        const eobject = new EObject(x,y,this.w,this.h,"object",this.tilesheet)
+        eobject.AddAnimation(tile.sx,tile.sy,tile.sw,tile.sh)
         eobject.SetAnimation(1)
         return eobject
     }
 }
-/**
- * This is a collision test for two objects. It musn't be a `EObjectClass` but it needs X, Y, Width and Height as a property
- * @param {EObjectClass} obj1 - The one Object
- * @param {EObjectClass} obj2 - The other Object
- * @returns {"left"|"right"|"top"|"bottom"|"none"}
- */
-function collision(obj1=new EObjectClass(),obj2=new EObjectClass())
-{
-    {
-        var vX = (obj1.x+(obj1.w/2)) - (obj2.x+(obj2.w/2)),
-              vY = (obj1.y+(obj1.h/2)) - (obj2.y+(obj2.h/2)),
-              hW = (obj1.w/2)+(obj2.w/2),
-              hH = (obj1.h/2)+(obj2.h/2),
-              colDir = "none"
-        if(Math.abs(vX)<hW&&Math.abs(vY)<hH)
-        {
-            var oX = hW-Math.abs(vX),
-                  oY = hH-Math.abs(vY)
-            if(oX>=oY)
-            {
-                if(vY>0)
-                {
-                    obj1.y += oY
-                    colDir = "top"
-                }
-                else
-                {
-                    obj1.y -= oY
-                    colDir = "bottom"
-                }
-            }
-            else
-            {
-                if(vX>0)
-                {
-                    obj1.x += oX
-                    colDir = "left"
-                }
-                else
-                {
-                    obj1.x -= oX
-                    colDir = "right"
-                }
-            }
-        }
-        if(colDir==="top")
-        {
-            return "top"
-        }
-        else if(colDir==="bottom")
-        {
-            return "bottom"
-        }
-        else
-        {
-            if(colDir==="left")
-            {
-                return "left"
-            }
-            else if(colDir==="right")
-            {
-                return "right"
-            }
-            else
-            {
-                return "none"
-            }
-        }
-    }
-}
+
 const globals = {
     Gacc:0.046875,
     Gdec:0.5,
@@ -458,16 +411,13 @@ const globals = {
 }
 module.exports =
 {
-    class:EObjectClass,
-    main:EObject,
-    player:EObjectPlayer,
-    door:EDoor,
-    trigger:ETrigger,
-    tileset:ETileset,
-    collision:collision,
-    globals:globals,
+    EObjectClass,
+    EObject,
+    EObjectPlayer,
+    ETileset,
+    globals,
     net:
     {
-        main:EObjectNet
+        EObjectNet
     }
 }

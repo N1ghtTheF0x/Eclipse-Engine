@@ -27,27 +27,37 @@ class EController
      */
     constructor()
     {
+        this.gp = window.navigator.getGamepads()[0]
+        // Left Joystick
         this.joyX1=0
         this.joyY1=0
         this.joy1=false
+        // Right Joystick
         this.joyX2=0
         this.joyY2=0
         this.joy2=false
+        // Right Buttons
         this.A=false
         this.B=false
         this.X=false
         this.Y=false
+        // Main Buttons
         this.start=false
         this.select=false
         this.power=false
+        // Directional Pads
         this.dup=false
         this.dleft=false
         this.ddown=false
         this.dright=false
+        // Left back buttons
         this.ls=0
         this.lt=0
+        this.ltP=false
+        // right back buttons
         this.rs=false
         this.rt=false
+        this.rtP=false
     }
 }
 
@@ -67,57 +77,69 @@ class EKeyboard
 
 class EInput
 {
-    constructor(WINDOW=window)
+    /**
+     * Handles Input like Keyboard, Mice and XInput Controllers
+     * @param {window} WINDOW - The `window` Object
+     */
+    constructor(WINDOW)
     {
         this.window = WINDOW
         this.lastInputDevice = "Keyboard"
         this.HasGameController = typeof this.window.navigator.getGamepads()[0]!=="undefined"
         this.cursor = new EMouse()
-        this.controllersPressed=[new EController()]
+        this.controllersPressed=[new EController(),new EController(),new EController(),new EController()]
         this.keyboardPressed=new EKeyboard()
     }
-    ControllerUpdate()
+    /**
+     * Updates the controller object
+     * @param {0|1|2|3} controller - The Index of the Controller. Only 0-3 (Controller 1-4)
+     */
+    ControllerUpdate(controller)
     {
-        this.HasGameController = typeof this.window.navigator.getGamepads()[0]!=="undefined"
+        this.HasGameController = (typeof this.window.navigator.getGamepads()[controller]!="undefined")
         if(this.HasGameController)
         {
             this.lastInputDevice="Gamepad"
-            for(const controller of this.controllersPressed)
+            if(this.window.navigator.getGamepads()[controller])
             {
-                controller.A=newgamepad.buttons[0].pressed // A
-                controller.B=newgamepad.buttons[1].pressed // B
-                controller.X=newgamepad.buttons[2].pressed // X
-                controller.Y=newgamepad.buttons[3].pressed // Y
+                this.controllersPressed[controller].gp=this.window.navigator.getGamepads()[controller]
+                this.controllersPressed[controller].A=this.window.navigator.getGamepads()[controller].buttons[0].pressed // A
+                this.controllersPressed[controller].B=this.window.navigator.getGamepads()[controller].buttons[1].pressed // B
+                this.controllersPressed[controller].X=this.window.navigator.getGamepads()[controller].buttons[2].pressed // X
+                this.controllersPressed[controller].Y=this.window.navigator.getGamepads()[controller].buttons[3].pressed // Y
     
-                controller.ls=newgamepad.buttons[4].pressed // Left shoulder
-                controller.rs=newgamepad.buttons[5].pressed // right shoulder
+                this.controllersPressed[controller].ls=this.window.navigator.getGamepads()[controller].buttons[4].pressed // Left shoulder
+                this.controllersPressed[controller].rs=this.window.navigator.getGamepads()[controller].buttons[5].pressed // right shoulder
     
-                controller.lt=newgamepad.buttons[6].value // left trigger
-                controller.rt=newgamepad.buttons[7].value // right trigger
+                this.controllersPressed[controller].lt=this.window.navigator.getGamepads()[controller].buttons[6].value // left trigger
+                this.controllersPressed[controller].rt=this.window.navigator.getGamepads()[controller].buttons[7].value // right trigger
                 
-                controller.select=newgamepad.buttons[8].pressed // select/back
-                controller.start=newgamepad.buttons[9].pressed // start/forward
+                this.controllersPressed[controller].select=this.window.navigator.getGamepads()[controller].buttons[8].pressed // select/back
+                this.controllersPressed[controller].start=this.window.navigator.getGamepads()[controller].buttons[9].pressed // start/forward
     
-                controller.joy1=newgamepad.buttons[10].pressed // Left Joystick Press
-                controller.joy2=newgamepad.buttons[11].pressed // Right Joystick Press
+                this.controllersPressed[controller].joy1=this.window.navigator.getGamepads()[controller].buttons[10].pressed // Left Joystick Press
+                this.controllersPressed[controller].joy2=this.window.navigator.getGamepads()[controller].buttons[11].pressed // Right Joystick Press
     
-                controller.dup=newgamepad.buttons[12].pressed // Dpad Up
-                controller.ddown=newgamepad.buttons[13].pressed // Dpad Down
-                controller.dleft=newgamepad.buttons[14].pressed // Dpad Left
-                controller.dright=newgamepad.buttons[15].pressed // Dpad Right
+                this.controllersPressed[controller].dup=this.window.navigator.getGamepads()[controller].buttons[12].pressed // Dpad Up
+                this.controllersPressed[controller].ddown=this.window.navigator.getGamepads()[controller].buttons[13].pressed // Dpad Down
+                this.controllersPressed[controller].dleft=this.window.navigator.getGamepads()[controller].buttons[14].pressed // Dpad Left
+                this.controllersPressed[controller].dright=this.window.navigator.getGamepads()[controller].buttons[15].pressed // Dpad Right
     
-                controller.power=newgamepad.buttons[16].pressed // Xbox Button/PS Button/Power Button
+                this.controllersPressed[controller].power=this.window.navigator.getGamepads()[controller].buttons[16].pressed // Xbox Button/PS Button/Power Button
     
+                this.controllersPressed[controller].joyX1=this.window.navigator.getGamepads()[controller].axes[0] // Left Joystick X-Position
+                this.controllersPressed[controller].joyY1=this.window.navigator.getGamepads()[controller].axes[1] // Left Joystick Y-Position
     
-                controller.joyX1=newgamepad.axes[0] // Left Joystick X-Position
-                controller.joyY1=newgamepad.axes[1] // Left Joystick Y-Position
-    
-                controller.joyX2=newgamepad.axes[2] // Right Joystick X-Position
-                controller.joyY2=newgamepad.axes[3] // Right Joystick Y-Position
+                this.controllersPressed[controller].joyX2=this.window.navigator.getGamepads()[controller].axes[2] // Right Joystick X-Position
+                this.controllersPressed[controller].joyY2=this.window.navigator.getGamepads()[controller].axes[3] // Right Joystick Y-Position
             }
         }
     }
-    Init(controls=new EInput())
+    /**
+     * Starts the Input Listener. Needs Itself as Parameter
+     * @param {EInput} controls - The `EInput` Object itself 
+     */
+    Init(controls)
     {
         this.window.addEventListener("keydown",function(event)
         {
@@ -139,8 +161,8 @@ class EInput
         this.window.addEventListener("mousemove",function(event)
         {
             event.preventDefault()
-            controls.cursor.x=event.offsetX
-            controls.cursor.y=event.offsetY
+            controls.cursor.x=event.pageX
+            controls.cursor.y=event.pageY
         },false)
         this.window.addEventListener("onmousedown",function(event)
         {
