@@ -5,13 +5,13 @@ class EIncomingMessage
     /**
      * A Message you get from the Client or Server
      * @param {"get"|"set"} action - Type of Action. Do you want to GET info or SET info?
-     * @param {string} uid - The **U**ser **ID** to send the data. Server's User ID is `ee-server`
-     * @param {*} data - The Data of the Message. Can be anything
+     * @param {string} userkey - The Key of the User to send the data.
+     * @param {any} data - The Data of the Message. Can be anything
      */
-    constructor(action="get",uid="",data)
+    constructor(action="get",userkey,data)
     {
         this.action = action
-        this.uid = uid
+        this.userkey = userkey
         this.data = data
     }
 }
@@ -24,5 +24,12 @@ module.exports = {
     decrypt(encryptedstring="")
     {
         
+    },
+    /**
+     * Generates a 128-bit Key for Server and Client token
+     */
+    generateKey()
+    {
+        return crypto.createSecretKey(crypto.randomBytes(128)).export().toString("utf-8")
     }
 }

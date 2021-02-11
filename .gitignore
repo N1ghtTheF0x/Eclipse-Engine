@@ -1,8 +1,7 @@
 # no need for node modules
 node_modules
 # no logs
-error.log
-out.log
+*.log
 # no game related things
 textures/*
 !textures/common
@@ -19,3 +18,5 @@ textures/fonts/*
 # no test files
 test.*
 yarn.lock
+*.js
+src/*.js

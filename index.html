@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script>const exports = {};</script>
         <style>
             *
             {
@@ -46,6 +47,7 @@
         </div>
         <debug id="debugtag" style="display: none;">
             <p>FPS: <span id="dfps"></span></p>
+            <p>SCREEN SIZE: <span id="screensize"></span></p>
             <p>PRESSED: <span id="pressed"></span></p>
             <p>MOUSE PRESSED: <span id="cpressed"></span></p>
             <p>PLAYER X SPD: <span id="pxsp"></span></p>
@@ -67,7 +69,7 @@
         document.addEventListener("DOMContentLoaded",function()
         {
             const SCRIPT = document.createElement("script")
-            SCRIPT.src = "main.js"
+            SCRIPT.src = "html.js"
             document.head.append(SCRIPT)
         })
     </script>

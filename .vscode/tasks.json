@@ -1,0 +1,42 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Release",
+            "type": "shell",
+            "command": "npx electron-builder"
+        },
+        {
+            "label": "Run Sandbox",
+            "type": "shell",
+            "command": "npx electron ."
+        },
+        {
+            "label": "Run Development Sandbox",
+            "type": "shell",
+            "command": "npx electron . --edev -edebug"
+        },
+        {
+            "label": "Run Empty Server",
+            "type": "shell",
+            "command": "npx electron . --server"
+        },
+        {
+            "label": "Run Sandbox + Hardware",
+            "type": "shell",
+            "command": "npx electron . --hardware"
+        },
+        {
+            "label": "Show Help",
+            "type": "shell",
+            "command": "npx electron . --help"
+        },
+        {
+            "label": "Compile Source Code",
+            "type": "shell",
+            "command": "npx tsc"
+        }
+    ]
+}
